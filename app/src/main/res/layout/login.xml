@@ -1,0 +1,47 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    style="@style/MM.CommonScrollView">
+
+    <FrameLayout style="@style/MM">
+
+        <LinearLayout style="@style/MM.CommonVerticalLL">
+
+            <include layout="@layout/header"/>
+
+            <LinearLayout style="@style/MW"
+                android:layout_marginTop="100dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/username"
+                    android:textSize="18sp"/>
+
+                <EditText
+                    android:id="@+id/userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/gray2"
+                    android:hint="@string/username_hint"/>
+
+            </LinearLayout>
+
+            <com.gc.materialdesign.views.ButtonRectangle
+                android:id="@+id/login"
+                materialdesign:rippleSpeed="100"
+                style="@style/MW.CommonBtn"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/login"/>
+
+        </LinearLayout>
+
+        <include android:id="@+id/loading"
+            layout="@layout/loading"/>
+
+    </FrameLayout>
+
+</ScrollView>

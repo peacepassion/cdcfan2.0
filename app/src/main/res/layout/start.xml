@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/blue2"
+    style="@style/MM">
+
+    <ImageView android:id="@+id/logo"
+        android:src="@drawable/logo_ball"
+        android:layout_centerInParent="true"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+
+    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_below="@id/logo"
+        android:background="@color/white" />
+
+    <TextView android:text="@string/app_des"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:textSize="12sp"
+        style="@style/WW"/>
+
+</RelativeLayout>

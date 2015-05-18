@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.linuxclub.cdcfan"
+    android:versionCode="1"
+    android:versionName="1.0.0">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="21"/>
+
+    <application
+        android:name="com.linuxclub.cdcfan.MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/logo2"
+        android:label="@string/app_name"
+        android:theme="@style/MyFullScreenTheme">
+        <activity android:name="com.linuxclub.cdcfan.ui.StartActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.linuxclub.cdcfan.ui.LoginActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:label="@string/app_name">
+        </activity>
+
+        <activity
+            android:name="com.linuxclub.cdcfan.ui.OrderActivity"
+            android:label="@string/title_activity_menu">
+        </activity>
+
+        <activity
+            android:name="com.linuxclub.cdcfan.ui.CancelOrderActivity"
+            android:label="@string/cancel_order"/>
+    </application>
+
+</manifest>

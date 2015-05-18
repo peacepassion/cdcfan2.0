@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    style="@style/MM">
+
+
+    <LinearLayout android:id="@+id/cancel_view"
+        style="@style/MM.CommonVerticalLL">
+
+        <include layout="@layout/header"/>
+
+        <TextView android:id="@+id/has_order"
+            android:text="@string/checking"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            style="@style/WW.CommonTV"/>
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/cancel"
+            materialdesign:rippleSpeed="100"
+            android:text="@string/cancel_order"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            style="@style/MW.CommonBtn"/>
+
+    </LinearLayout>
+
+    <include android:id="@+id/loading"
+        layout="@layout/loading"/>
+
+</FrameLayout>
