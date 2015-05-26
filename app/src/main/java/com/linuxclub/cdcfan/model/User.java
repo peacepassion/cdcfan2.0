@@ -1,4 +1,4 @@
-package com.linuxclub.cdcfan.ui;
+package com.linuxclub.cdcfan.model;
 
 /**
  * Created by peace_da on 2015/4/15.

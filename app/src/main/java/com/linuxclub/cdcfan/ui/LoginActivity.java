@@ -7,15 +7,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.linuxclub.cdcfan.R;
-import com.linuxclub.cdcfan.httptask.GetHttpTask;
-import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
 import com.gc.materialdesign.views.Button;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.linuxclub.cdcfan.R;
+import com.linuxclub.cdcfan.httptask.LoginTask;
+import com.linuxclub.cdcfan.model.User;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
-public class LoginActivity extends LoadingBaseActivity implements OnClickListener, HttpTaskCallback {
+public class LoginActivity extends LoadingBaseActivity implements OnClickListener {
 
     public static final String KEY_PSID = "key_psid";
     public static final String KEY_NAME = "name";
@@ -78,7 +80,26 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     private void startLogin() {
-        new GetHttpTask(this, this, mConst.getDomain(), mConst.getLoginPath(), mConst.getLoginParams(mUserName)).execute();
+        RestAdapter ra = mRestBuilder.build();
+        LoginTask loginTask = ra.create(LoginTask.class);
+        loginTask.login(mUserName, new Callback<User>() {
+            @Override
+            public void success(User user, Response response) {
+                Log.d(LOG_TAG, "login succ");
+                showLoadingPage(false);
+                Log.d("CDC", "get user: " + user);
+                startOrderActivity(user);
+                saveUserInfo(user);
+                finish();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(LOG_TAG, "login error: " + error);
+                showLoadingPage(false);
+                showFixToast(String.format(mRes.getString(R.string.fail), mUserName));
+            }
+        });
         showLoadingPage(true);
     }
 
@@ -95,39 +116,4 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
         mPre.setKeyLastUserName(user.name);
     }
 
-    boolean parseResult(String jsonObj, User user) {
-        try {
-            JSONObject json = new JSONObject(jsonObj);
-            user.psid = json.getString("psid");
-            user.name = json.getString("name");
-            user.depcode = json.getString("depcode");
-            if (user.psid.equals("") == false
-                    && user.name.equals("") == false
-                    && user.depcode.equals("") == false) {
-                return true;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    @Override
-    public void onSucc(int statusCode, String responseBody) {
-        Log.d("CDC", "user check task ends. result: " + true);
-        showLoadingPage(false);
-        User user = new User();
-        if (parseResult(responseBody, user)) {
-            Log.d("CDC", "get user: " + user);
-            startOrderActivity(user);
-            saveUserInfo(user);
-            finish();
-        }
-    }
-
-    @Override
-    public void onErr(int responseCode, String responseBody) {
-        showLoadingPage(false);
-        showFixToast(String.format(mRes.getString(R.string.fail), mUserName));
-    }
 }
