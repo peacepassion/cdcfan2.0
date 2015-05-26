@@ -5,14 +5,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import com.linuxclub.cdcfan.R;
-import com.linuxclub.cdcfan.httptask.GetHttpTask;
-import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
-import com.linuxclub.cdcfan.httptask.PostHttpTask;
 import com.gc.materialdesign.views.Button;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.linuxclub.cdcfan.R;
+import com.linuxclub.cdcfan.httptask.CancelOrderTask;
+import com.linuxclub.cdcfan.httptask.CheckOrderTask;
+import com.linuxclub.cdcfan.model.CacelOrderResult;
+import com.linuxclub.cdcfan.model.Order;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,23 +69,23 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
             showLoadingPage(false);
             showDisableBtnPage(true, mRes.getString(R.string.check_order_fail));
         } else {
-            new GetHttpTask(this, new HttpTaskCallback() {
+            RestAdapter ra = mRestBuilder.build();
+            CheckOrderTask task = ra.create(CheckOrderTask.class);
+            task.checkOrder(mPSID, new Callback<List<com.linuxclub.cdcfan.model.Order>>() {
                 @Override
-                public void onSucc(int statusCode, String responseBody) {
+                public void success(List<com.linuxclub.cdcfan.model.Order> orders, Response response) {
+                    mOrderList = orders;
                     showLoadingPage(false);
-                    if (parseCheckOrderResult(responseBody)) {
-                        showAbleBtnPage(true);
-                    } else {
-                        showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
-                    }
+                    showAbleBtnPage(true);
                 }
 
                 @Override
-                public void onErr(int responseCode, String responseBody) {
+                public void failure(RetrofitError error) {
                     showLoadingPage(false);
                     showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
                 }
-            }, mConst.getDomain(), mConst.getCheckOrderPath(), mConst.getCheckOrderParams(mPSID)).execute();
+            });
+            showLoadingPage(true);
         }
     }
 
@@ -106,58 +108,24 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
         int id = v.getId();
         if (id == R.id.cancel) {
             Log.d("CDC", "start cancel order");
-            new PostHttpTask(this, new HttpTaskCallback() {
+            RestAdapter ra = mRestBuilder.build();
+            CancelOrderTask task = ra.create(CancelOrderTask.class);
+            task.cancelOrder(mOrderList.get(0).orderid, new Callback<CacelOrderResult>() {
                 @Override
-                public void onSucc(int statusCode, String responseBody) {
+                public void success(CacelOrderResult cacelOrderResult, Response response) {
                     showLoadingPage(false);
                     showDisableBtnPage(true, mRes.getString(R.string.cancel_order_succ));
                     showFixToast(mRes.getString(R.string.cancel_order_succ));
                 }
 
                 @Override
-                public void onErr(int responseCode, String responseBody) {
+                public void failure(RetrofitError error) {
                     showLoadingPage(false);
                     showDisableBtnPage(true, mRes.getString(R.string.cancel_order_fail));
                 }
-            }, mConst.getDomain(), mConst.getCancelOrderPath(), mConst.getCancelOrderParams(mOrderList.get(0).mOrderID)).execute();
+            });
             showLoadingPage(true);
         }
     }
 
-    private boolean parseCheckOrderResult(String jsonBody) {
-        try {
-            JSONArray arr = new JSONArray(jsonBody);
-            for (int i = 0; i < arr.length(); ++i) {
-                Order order = new Order();
-                if (parseOrder(arr.getJSONObject(i), order)) {
-                    mOrderList.add(order);
-                }
-            }
-            if (mOrderList.size() > 0) {
-                return true;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private boolean parseOrder(JSONObject obj, Order order) {
-        try {
-            order.mOrderID = obj.getString("orderid");
-            if (order.mOrderID.equals("")) {
-                return false;
-            }
-            order.mFoodName = obj.getString("foodname");
-            return true;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    static class Order {
-        String mOrderID = "";
-        String mFoodName = "";
-    }
 }

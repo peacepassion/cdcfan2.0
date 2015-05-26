@@ -5,10 +5,15 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
+import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.config.Const;
 import com.linuxclub.cdcfan.config.PreferenceHelper;
 import com.linuxclub.cdcfan.utils.LogHelper;
 import com.gc.materialdesign.widgets.SnackBar;
+import retrofit.RestAdapter;
+import retrofit.RestAdapter.Builder;
+import retrofit.RestAdapter.Log;
+import retrofit.RestAdapter.LogLevel;
 
 /**
  * Created by peace_da on 2015/4/15.
@@ -20,6 +25,7 @@ public abstract class BaseActivity extends FragmentActivity {
     protected Const mConst;
     protected PreferenceHelper mPre;
     protected Resources mRes;
+    protected RestAdapter.Builder mRestBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,9 @@ public abstract class BaseActivity extends FragmentActivity {
         mPre = PreferenceHelper.getInstance(this);
         mRes = getResources();
         mConst = Const.getInstance(this);
+        mRestBuilder = new Builder();
+        mRestBuilder.setEndpoint(mRes.getString(R.string.portal))
+        .setLogLevel(LogLevel.FULL);
     }
 
     protected void initView() {

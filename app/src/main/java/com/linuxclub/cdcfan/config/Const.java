@@ -61,7 +61,7 @@ public class Const {
 
     public Map<String, String> getOrderParams(String psid, String depcode, String type) {
         Map<String, String> map = new HashMap<String, String>(3);
-        map.put(mRes.getString(R.string.order_param_order), type);
+        map.put(mRes.getString(R.string.order_param_type), type);
         map.put(mRes.getString(R.string.order_param_psid), psid);
         map.put(mRes.getString(R.string.order_param_depcode), depcode);
         return map;
