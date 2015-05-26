@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
 import com.linuxclub.cdcfan.httptask.OrderTask;
@@ -70,6 +71,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.order) {
+            FlurryAgent.logEvent(mRes.getString(R.string.event_order));
             RestAdapter ra = mRestBuilder.build();
             OrderTask ot = ra.create(OrderTask.class);
             ot.order(mUser.psid, mUser.depcode, mRes.getString(R.string.order_param_type_def_val), new Callback<OrderResult>() {
@@ -107,6 +109,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
             startActivity(intent);
             finish();
         } else if (id == R.id.check_order) {
+            FlurryAgent.logEvent(mRes.getString(R.string.event_check_order));
             Intent intent = new Intent(this, CancelOrderActivity.class);
             intent.putExtra(LoginActivity.KEY_PSID, mUser.psid);
             startActivity(intent);

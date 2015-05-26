@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
+import com.flurry.android.FlurryAgent;
 import com.gc.materialdesign.widgets.Dialog;
 import com.github.snowdream.android.app.DownloadTask;
 import com.github.snowdream.android.app.updater.DefaultUpdateListener;
@@ -29,6 +30,7 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FlurryAgent.logEvent(mRes.getString(R.string.event_enter_start_acti));
 
         findViewById(R.id.logo).postDelayed(new Runnable() {
             @Override

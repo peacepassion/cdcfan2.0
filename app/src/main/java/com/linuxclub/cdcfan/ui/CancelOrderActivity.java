@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import com.flurry.android.FlurryAgent;
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.CancelOrderTask;
@@ -107,6 +108,7 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.cancel) {
+            FlurryAgent.logEvent(mRes.getString(R.string.event_cancel_order));
             Log.d("CDC", "start cancel order");
             RestAdapter ra = mRestBuilder.build();
             CancelOrderTask task = ra.create(CancelOrderTask.class);
