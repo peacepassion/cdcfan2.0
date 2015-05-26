@@ -8,18 +8,23 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
-import com.linuxclub.cdcfan.httptask.PostHttpTask;
+import com.linuxclub.cdcfan.httptask.OrderTask;
 import com.gc.materialdesign.views.Button;
+import com.linuxclub.cdcfan.model.OrderResult;
 import com.linuxclub.cdcfan.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class OrderActivity extends LoadingBaseActivity implements OnClickListener, HttpTaskCallback {
 
     private TextView mBasicInfo;
     private Button mOrderBtn;
     private Button mLogoutBtn;
-    private OrderResult mOrderResult;
+    private OrderSummary mOrderSummary;
     private Button mCheckOrderBtn;
 
     User mUser;
@@ -65,7 +70,35 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.order) {
-            new PostHttpTask(this, this, mConst.getDomain(), mConst.getOrderPath(), mConst.getOrderParams(mUser.psid, mUser.depcode, mRes.getString(R.string.order_param_order_dev_val))).execute();
+            RestAdapter ra = mRestBuilder.build();
+            OrderTask ot = ra.create(OrderTask.class);
+            ot.order(mUser.psid, mUser.depcode, mRes.getString(R.string.order_param_type_def_val), new Callback<OrderResult>() {
+                @Override
+                public void success(OrderResult orderResult, Response response) {
+                    showLoadingPage(false);
+                    if (orderResult.succeed_count > 0) {
+                        mOrderSummary = OrderSummary.SUCC;
+                        showOrderFailPage(true);
+                    } else {
+                        if (orderResult.exceed_count > 0) {
+                            mOrderSummary = OrderSummary.EXCEED;
+                        } else if (orderResult.rejected_count > 0) {
+                            mOrderSummary = OrderSummary.OVER_TIME;
+                        } else {
+                            mOrderSummary = OrderSummary.FAIL;
+                        }
+                        showOrderFailPage(true);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.d("CDC", "error: " + error);
+                    showLoadingPage(false);
+                    mOrderSummary = OrderSummary.FAIL;
+                    showOrderFailPage(true);
+                }
+            });
             showLoadingPage(true);
         } else if (id == R.id.log_out) {
             mPre.setKeyLastUserName("");
@@ -82,7 +115,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
 
     @Override
     public void onSucc(int statusCode, String responseBody) {
-        Log.d("CDC",  "response: " + responseBody);
+        Log.d("CDC", "response: " + responseBody);
         showLoadingPage(false);
         if (parseResult(responseBody)) {
             showOrderSuccPage(true);
@@ -93,7 +126,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
 
     @Override
     public void onErr(int responseCode, String responseBody) {
-        Log.d("CDC",  "response: " + responseBody);
+        Log.d("CDC", "response: " + responseBody);
         showLoadingPage(false);
     }
 
@@ -102,23 +135,23 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
             JSONObject obj = new JSONObject(jsonObj);
             int num = obj.getInt("succeed_count");
             if (num > 0) {
-                mOrderResult = OrderResult.SUCC;
+                mOrderSummary = OrderSummary.SUCC;
                 return true;
             }
             num = obj.getInt("exceed_count");
             if (num > 0) {
-                mOrderResult = OrderResult.EXCEED;
+                mOrderSummary = OrderSummary.EXCEED;
                 return false;
             }
             num = obj.getInt("rejected_count");
             if (num > 0) {
-                mOrderResult = OrderResult.OVER_TIME;
+                mOrderSummary = OrderSummary.OVER_TIME;
                 return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mOrderResult = OrderResult.FAIL;
+        mOrderSummary = OrderSummary.FAIL;
         return false;
     }
 
@@ -130,11 +163,11 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
 
     private void showOrderFailPage(boolean flag) {
         if (flag) {
-            showFixToast(String.format(mRes.getString(R.string.order_fail), mOrderResult.getDescription(mRes)));
+            showFixToast(String.format(mRes.getString(R.string.order_fail), mOrderSummary.getDescription(mRes)));
         }
     }
 
-    static enum OrderResult {
+    static enum OrderSummary {
         SUCC(R.string.succ_des),
         EXCEED(R.string.exceed_des),
         OVER_TIME(R.string.overtime_des),
@@ -142,7 +175,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
 
         private int mDescriptionID;
 
-        OrderResult(int des) {
+        OrderSummary(int des) {
             mDescriptionID = des;
         }
 
