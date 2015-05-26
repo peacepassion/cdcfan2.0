@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.CancelOrderTask;
@@ -24,11 +26,17 @@ import java.util.List;
  */
 public class CancelOrderActivity extends LoadingBaseActivity implements OnClickListener {
 
-    public Button mCancelBtn;
+    @InjectView(R.id.cancel)
+    Button mCancelBtn;
+
+    @InjectView(R.id.has_order)
+    TextView mHasOrderTV;
+
+    @InjectView(R.id.cancel_view)
+    View mCancelView;
+
     private String mPSID;
     private List<Order> mOrderList;
-    private TextView mHasOrderTV;
-    private View mCancelView;
 
     @Override
     protected int getLayout() {
@@ -46,10 +54,6 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
     @Override
     protected void initView() {
         super.initView();
-        mCancelBtn = (Button) findViewById(R.id.cancel);
-        mCancelBtn.setOnClickListener(this);
-        mHasOrderTV = (TextView) findViewById(R.id.has_order);
-        mCancelView = findViewById(R.id.cancel_view);
 
         ((TextView) findViewById(R.id.title)).setText(mRes.getString(R.string.check_order));
 
@@ -104,6 +108,7 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
     }
 
     @Override
+    @OnClick({R.id.cancel})
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.cancel) {

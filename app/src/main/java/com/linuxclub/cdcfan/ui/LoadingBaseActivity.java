@@ -1,18 +1,20 @@
 package com.linuxclub.cdcfan.ui;
 
 import android.view.View;
+import butterknife.InjectView;
 import com.linuxclub.cdcfan.R;
 
 /**
  * Created by peace_da on 2015/5/8.
  */
 abstract class LoadingBaseActivity extends BaseActivity {
-    private View mLoadingView;
+
+    @InjectView(R.id.loading)
+    View mLoadingView;
 
     @Override
     protected void initView() {
         super.initView();
-        mLoadingView = findViewById(R.id.loading);
         showLoadingPage(false);
     }
 
