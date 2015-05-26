@@ -10,6 +10,7 @@ import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
 import com.linuxclub.cdcfan.httptask.PostHttpTask;
 import com.gc.materialdesign.views.Button;
+import com.linuxclub.cdcfan.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
