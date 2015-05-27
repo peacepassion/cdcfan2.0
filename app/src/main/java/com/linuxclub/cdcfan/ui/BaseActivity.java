@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
 import butterknife.ButterKnife;
+import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.config.Const;
 import com.linuxclub.cdcfan.config.PreferenceHelper;
@@ -42,6 +43,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     protected void initBasicData() {
         ButterKnife.inject(this);
+        StatService.setDebugOn(true);
         mPre = PreferenceHelper.getInstance(this);
         mRes = getResources();
         mConst = Const.getInstance(this);
@@ -51,6 +53,18 @@ public abstract class BaseActivity extends FragmentActivity {
     }
 
     protected void initView() {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatService.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(this);
     }
 
     protected void showFixToast(String content) {
