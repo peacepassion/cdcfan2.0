@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.LoginTask;
@@ -23,8 +25,12 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     public static final String KEY_NAME = "name";
     public static final String KEY_DEPCODE = "depcode";
 
-    private EditText mUserNameET;
-    private Button mLoginBtn;
+    @InjectView(R.id.username)
+    EditText mUserNameET;
+
+    @InjectView(R.id.login)
+    Button mLoginBtn;
+
     private String mUserName;
 
 
@@ -55,9 +61,6 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     @Override
     protected void initView() {
         super.initView();
-        mUserNameET = (EditText) findViewById(R.id.userName);
-        mLoginBtn = (Button) findViewById(R.id.login);
-        mLoginBtn.setOnClickListener(this);
         ((TextView) findViewById(R.id.title)).setText(mRes.getString(R.string.log_in));
     }
 
@@ -67,6 +70,7 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     @Override
+    @OnClick({R.id.login})
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.login) {
