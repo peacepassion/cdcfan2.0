@@ -22,6 +22,4 @@
     <string name="cancel_order_path">api/cancel-order</string>
     <string name="cancel_order_param_orderid">orderid</string>
 
-    <string name="flurry_key">DSZWKQZQSHRZ8HV8YC6S</string>
-
 </resources>
