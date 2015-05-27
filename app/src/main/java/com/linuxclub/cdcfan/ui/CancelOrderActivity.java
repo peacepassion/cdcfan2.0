@@ -80,13 +80,17 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
                 public void success(List<com.linuxclub.cdcfan.model.Order> orders, Response response) {
                     mOrderList = orders;
                     showLoadingPage(false);
-                    showAbleBtnPage(true);
+                    if (orders.size() > 0) {
+                        showAbleBtnPage(true);
+                    } else {
+                        showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
+                    }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
                     showLoadingPage(false);
-                    showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
+                    showDisableBtnPage(true, mRes.getString(R.string.check_order_fail));
                 }
             });
             showLoadingPage(true);
@@ -101,7 +105,6 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
 
     private void showDisableBtnPage(boolean flag, String content) {
         if (flag) {
-            showFixToast(content);
             mCancelBtn.setEnabled(false);
             mHasOrderTV.setText(content);
         }
@@ -127,6 +130,7 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
                 public void failure(RetrofitError error) {
                     showLoadingPage(false);
                     showDisableBtnPage(true, mRes.getString(R.string.cancel_order_fail));
+                    showFixToast(mRes.getString(R.string.cancel_order_fail));
                 }
             });
             showLoadingPage(true);
