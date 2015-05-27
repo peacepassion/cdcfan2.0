@@ -3,10 +3,9 @@ package com.linuxclub.cdcfan.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
-import com.gc.materialdesign.widgets.Dialog;
+import com.baidu.mobstat.StatService;
 import com.github.snowdream.android.app.DownloadTask;
 import com.github.snowdream.android.app.updater.DefaultUpdateListener;
 import com.github.snowdream.android.app.updater.UpdateFormat;
@@ -29,6 +28,7 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatService.onEvent(this, mRes.getString(R.string.event_enter_start_acti), mRes.getString(R.string.event_enter_start_acti));
 
         findViewById(R.id.logo).postDelayed(new Runnable() {
             @Override
