@@ -34,11 +34,9 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.debug'
         }
 
         signed {
-            applicationIdSuffix '.signed'
             signingConfig signingConfigs.release
         }
     }
@@ -46,6 +44,10 @@ android {
     lintOptions {
         abortOnError false
     }
+}
+
+task run(type: Exec, dependsOn: 'installDebug') {
+    commandLine 'adb', 'shell', 'am', 'start', '-n', 'com.linuxclub.cdcfan/com.linuxclub.cdcfan.ui.StartActivity', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER'
 }
 
 dependencies {
