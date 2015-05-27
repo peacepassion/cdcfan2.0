@@ -2,7 +2,6 @@ package com.linuxclub.cdcfan;
 
 import android.app.Application;
 import android.content.res.Resources;
-import com.flurry.android.FlurryAgent;
 import com.linuxclub.cdcfan.utils.LogHelper;
 
 /**
@@ -19,19 +18,10 @@ public class MyApplication extends Application {
         initBasicData();
 
         com.github.snowdream.android.util.Log.setTag(LogHelper.DEFAULT_LOG_TAG);
-
-        initFlurry();
     }
 
     private void initBasicData() {
         mRes = getResources();
     }
 
-    private void initFlurry() {
-        FlurryAgent.setLogEnabled(true);
-        FlurryAgent.setLogEvents(true);
-        FlurryAgent.setReportLocation(true);
-
-        FlurryAgent.init(this, mRes.getString(R.string.flurry_key));
-    }
 }

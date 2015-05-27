@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.linuxclub.cdcfan"
-    android:versionCode="2"
-    android:versionName="2.0.0">
+    package="com.linuxclub.cdcfan">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:name="com.linuxclub.cdcfan.MyApplication"
@@ -16,6 +16,23 @@
         android:icon="@drawable/logo2"
         android:label="@string/app_name"
         android:theme="@style/MyFullScreenTheme">
+
+        <meta-data
+            android:name="BaiduMobAd_CHANNEL"
+            android:value="Baidu Market"/>
+        <meta-data
+            android:name="BaiduMobAd_STAT_ID"
+            android:value="129de1ebc7"/>
+        <meta-data
+            android:name="BaiduMobAd_SEND_STRATEGY"
+            android:value="SET_TIME_INTERVAL"/>
+        <meta-data
+            android:name="BaiduMobAd_TIME_INTERVAL"
+            android:value="1"/>
+        <meta-data
+            android:name="BaiduMobAd_EXCEPTION_LOG"
+            android:value="true"/>
+
         <activity android:name="com.linuxclub.cdcfan.ui.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

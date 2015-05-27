@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="flurry_key">DSZWKQZQSHRZ8HV8YC6S</string>
+    <string name="track_key">129de1ebc7</string>
 
     <!-- event definition -->
     <string name="event_enter_start_acti">event_enter_start_acti</string>
