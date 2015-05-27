@@ -82,7 +82,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
                     showLoadingPage(false);
                     if (orderResult.succeed_count > 0) {
                         mOrderSummary = OrderSummary.SUCC;
-                        showOrderFailPage(true);
+                        showOrderSuccPage(true);
                     } else {
                         if (orderResult.exceed_count > 0) {
                             mOrderSummary = OrderSummary.EXCEED;
