@@ -2,14 +2,18 @@ package com.linuxclub.cdcfan.ui;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.telephony.ServiceState;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import com.baidu.mobstat.StatService;
+import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
 import com.linuxclub.cdcfan.httptask.OrderTask;
-import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.model.OrderResult;
 import com.linuxclub.cdcfan.model.User;
 import org.json.JSONException;
@@ -21,11 +25,19 @@ import retrofit.client.Response;
 
 public class OrderActivity extends LoadingBaseActivity implements OnClickListener, HttpTaskCallback {
 
-    private TextView mBasicInfo;
-    private Button mOrderBtn;
-    private Button mLogoutBtn;
+    @InjectView(R.id.title)
+    TextView mBasicInfo;
+
+    @InjectView(R.id.order)
+    Button mOrderBtn;
+
+    @InjectView(R.id.log_out)
+    Button mLogoutBtn;
+
+    @InjectView(R.id.check_order)
+    Button mCheckOrderBtn;
+
     private OrderSummary mOrderSummary;
-    private Button mCheckOrderBtn;
 
     User mUser;
 
@@ -48,14 +60,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     @Override
     protected void initView() {
         super.initView();
-        mBasicInfo = (TextView) findViewById(R.id.title);
         mBasicInfo.setText(mUser.name + " / " + mUser.depcode);
-        mOrderBtn = (Button) findViewById(R.id.order);
-        mOrderBtn.setOnClickListener(this);
-        mLogoutBtn = (Button) findViewById(R.id.log_out);
-        mLogoutBtn.setOnClickListener(this);
-        mCheckOrderBtn = (Button) findViewById(R.id.check_order);
-        mCheckOrderBtn.setOnClickListener(this);
 
         showOrderSuccPage(false);
         showOrderFailPage(false);
@@ -67,9 +72,11 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     @Override
+    @OnClick({R.id.order, R.id.log_out, R.id.check_order})
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.order) {
+            StatService.onEvent(this, mRes.getString(R.string.event_order), mRes.getString(R.string.event_order));
             RestAdapter ra = mRestBuilder.build();
             OrderTask ot = ra.create(OrderTask.class);
             ot.order(mUser.psid, mUser.depcode, mRes.getString(R.string.order_param_type_def_val), new Callback<OrderResult>() {
@@ -78,7 +85,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
                     showLoadingPage(false);
                     if (orderResult.succeed_count > 0) {
                         mOrderSummary = OrderSummary.SUCC;
-                        showOrderFailPage(true);
+                        showOrderSuccPage(true);
                     } else {
                         if (orderResult.exceed_count > 0) {
                             mOrderSummary = OrderSummary.EXCEED;
@@ -107,6 +114,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
             startActivity(intent);
             finish();
         } else if (id == R.id.check_order) {
+            StatService.onEvent(this, mRes.getString(R.string.event_check_order), mRes.getString(R.string.event_check_order));
             Intent intent = new Intent(this, CancelOrderActivity.class);
             intent.putExtra(LoginActivity.KEY_PSID, mUser.psid);
             startActivity(intent);

@@ -5,6 +5,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import com.baidu.mobstat.StatService;
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.CancelOrderTask;
@@ -24,11 +27,17 @@ import java.util.List;
  */
 public class CancelOrderActivity extends LoadingBaseActivity implements OnClickListener {
 
-    public Button mCancelBtn;
+    @InjectView(R.id.cancel)
+    Button mCancelBtn;
+
+    @InjectView(R.id.has_order)
+    TextView mHasOrderTV;
+
+    @InjectView(R.id.cancel_view)
+    View mCancelView;
+
     private String mPSID;
     private List<Order> mOrderList;
-    private TextView mHasOrderTV;
-    private View mCancelView;
 
     @Override
     protected int getLayout() {
@@ -46,10 +55,6 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
     @Override
     protected void initView() {
         super.initView();
-        mCancelBtn = (Button) findViewById(R.id.cancel);
-        mCancelBtn.setOnClickListener(this);
-        mHasOrderTV = (TextView) findViewById(R.id.has_order);
-        mCancelView = findViewById(R.id.cancel_view);
 
         ((TextView) findViewById(R.id.title)).setText(mRes.getString(R.string.check_order));
 
@@ -76,13 +81,17 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
                 public void success(List<com.linuxclub.cdcfan.model.Order> orders, Response response) {
                     mOrderList = orders;
                     showLoadingPage(false);
-                    showAbleBtnPage(true);
+                    if (orders.size() > 0) {
+                        showAbleBtnPage(true);
+                    } else {
+                        showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
+                    }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
                     showLoadingPage(false);
-                    showDisableBtnPage(true, mRes.getString(R.string.check_order_fail2));
+                    showDisableBtnPage(true, mRes.getString(R.string.check_order_fail));
                 }
             });
             showLoadingPage(true);
@@ -97,16 +106,17 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
 
     private void showDisableBtnPage(boolean flag, String content) {
         if (flag) {
-            showFixToast(content);
             mCancelBtn.setEnabled(false);
             mHasOrderTV.setText(content);
         }
     }
 
     @Override
+    @OnClick({R.id.cancel})
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.cancel) {
+            StatService.onEvent(this, mRes.getString(R.string.event_cancel_order), mRes.getString(R.string.event_order));
             Log.d("CDC", "start cancel order");
             RestAdapter ra = mRestBuilder.build();
             CancelOrderTask task = ra.create(CancelOrderTask.class);
@@ -122,6 +132,7 @@ public class CancelOrderActivity extends LoadingBaseActivity implements OnClickL
                 public void failure(RetrofitError error) {
                     showLoadingPage(false);
                     showDisableBtnPage(true, mRes.getString(R.string.cancel_order_fail));
+                    showFixToast(mRes.getString(R.string.cancel_order_fail));
                 }
             });
             showLoadingPage(true);

@@ -4,7 +4,10 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
 import android.widget.Toast;
+import butterknife.ButterKnife;
+import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.config.Const;
 import com.linuxclub.cdcfan.config.PreferenceHelper;
@@ -39,6 +42,8 @@ public abstract class BaseActivity extends FragmentActivity {
     protected abstract int getLayout();
 
     protected void initBasicData() {
+        ButterKnife.inject(this);
+        StatService.setDebugOn(true);
         mPre = PreferenceHelper.getInstance(this);
         mRes = getResources();
         mConst = Const.getInstance(this);
@@ -50,12 +55,39 @@ public abstract class BaseActivity extends FragmentActivity {
     protected void initView() {
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        StatService.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        StatService.onPause(this);
+    }
+
     protected void showFixToast(String content) {
         new SnackBar(this, content).show();
     }
 
     protected void showRealToast(String content) {
         Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+    }
+
+    public BaseActivity visible(View v) {
+        v.setVisibility(View.VISIBLE);
+        return this;
+    }
+
+    public BaseActivity invisible(View v) {
+        v.setVisibility(View.INVISIBLE);
+        return this;
+    }
+
+    public BaseActivity gone(View v) {
+        v.setVisibility(View.GONE);
+        return this;
     }
 
 }
