@@ -16,16 +16,38 @@ android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
-    lintOptions {
-        abortOnError false
-    }
-
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 2
         versionName "2.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
+    }
+
+    buildTypes {
+        debug {
+        }
+
+        signed {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+task run(type: Exec, dependsOn: 'installDebug') {
+    commandLine 'adb', 'shell', 'am', 'start', '-n', 'com.linuxclub.cdcfan/com.linuxclub.cdcfan.ui.StartActivity', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER'
 }
 
 dependencies {
