@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import com.flurry.android.FlurryAgent;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
@@ -22,11 +24,19 @@ import retrofit.client.Response;
 
 public class OrderActivity extends LoadingBaseActivity implements OnClickListener, HttpTaskCallback {
 
-    private TextView mBasicInfo;
-    private Button mOrderBtn;
-    private Button mLogoutBtn;
+    @InjectView(R.id.title)
+    TextView mBasicInfo;
+
+    @InjectView(R.id.order)
+    Button mOrderBtn;
+
+    @InjectView(R.id.log_out)
+    Button mLogoutBtn;
+
+    @InjectView(R.id.check_order)
+    Button mCheckOrderBtn;
+
     private OrderSummary mOrderSummary;
-    private Button mCheckOrderBtn;
 
     User mUser;
 
@@ -49,14 +59,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     @Override
     protected void initView() {
         super.initView();
-        mBasicInfo = (TextView) findViewById(R.id.title);
         mBasicInfo.setText(mUser.name + " / " + mUser.depcode);
-        mOrderBtn = (Button) findViewById(R.id.order);
-        mOrderBtn.setOnClickListener(this);
-        mLogoutBtn = (Button) findViewById(R.id.log_out);
-        mLogoutBtn.setOnClickListener(this);
-        mCheckOrderBtn = (Button) findViewById(R.id.check_order);
-        mCheckOrderBtn.setOnClickListener(this);
 
         showOrderSuccPage(false);
         showOrderFailPage(false);
@@ -68,6 +71,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     @Override
+    @OnClick({R.id.order, R.id.log_out, R.id.check_order})
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.order) {
@@ -80,7 +84,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
                     showLoadingPage(false);
                     if (orderResult.succeed_count > 0) {
                         mOrderSummary = OrderSummary.SUCC;
-                        showOrderFailPage(true);
+                        showOrderSuccPage(true);
                     } else {
                         if (orderResult.exceed_count > 0) {
                             mOrderSummary = OrderSummary.EXCEED;
