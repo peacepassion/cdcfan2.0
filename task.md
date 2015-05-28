@@ -1,10 +1,13 @@
 # Task
 
 #### Doing
-* introduce [Flurry](http://www.flurry.com/solutions/analytics) for tracking user behavior;  
+* order remind function
 
 #### ToDo
-* write a gradle script for release with my signature;
+* add a legal declaration page by toolbar menu
 
 #### Done
 * introduce [retrofit](https://github.com/square/retrofit);
+* add sign config for build;
+* add auto run task in Gradle;
+* introduce [BaiDuAnalytics](http://mtj.baidu.com/web/dashboard) tracking users;
