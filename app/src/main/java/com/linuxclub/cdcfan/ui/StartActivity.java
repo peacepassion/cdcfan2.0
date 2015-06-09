@@ -10,6 +10,7 @@ import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
 import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.autoupdater.UpdateCheckResult;
+import com.linuxclub.cdcfan.autoupdater.UpdateListener;
 import com.linuxclub.cdcfan.autoupdater.UpdateManager;
 
 import de.greenrobot.event.EventBus;
@@ -17,7 +18,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by peace_da on 2015/5/8.
  */
-public class StartActivity extends BaseActivity {
+public class StartActivity extends BaseActivity implements UpdateListener {
 
     private UpdateManager mUpdateMgr;
 
@@ -51,8 +52,9 @@ public class StartActivity extends BaseActivity {
         mUpdateMgr.startCheckUpdate();
     }
 
-    public void onEventAsync(UpdateCheckResult updateCheckResult) {
+    public void onEventMainThread(UpdateCheckResult updateCheckResult) {
         Log.d(LOG_TAG, "check update returns");
+        Log.d(LOG_TAG, "result: " + updateCheckResult);
         if (updateCheckResult.isCheckSucc()) {
             Log.d(LOG_TAG, "check update succ");
             if (updateCheckResult.isForceUpdate()) {
@@ -60,7 +62,9 @@ public class StartActivity extends BaseActivity {
             } else {
                 try {
                     int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-                    if (versionCode < updateCheckResult.getVersionCode()) {
+                    Log.d(LOG_TAG, "self version code: " + versionCode + ", get version: " + updateCheckResult.getVersionCode());
+                    if (mGlobalSharedPref.getSkipVersions().contains("" + versionCode) == false
+                            && versionCode < updateCheckResult.getVersionCode()) {
                         showUpdateDialog(updateCheckResult);
                     } else {
                         goToLoginPage();
@@ -77,7 +81,7 @@ public class StartActivity extends BaseActivity {
         }
     }
 
-    public void showForceUpdateDialog(UpdateCheckResult updateCheckResult) {
+    public void showForceUpdateDialog(final UpdateCheckResult updateCheckResult) {
         new MaterialDialog.Builder(StartActivity.this)
                 .title(mRes.getString(R.string.update_title))
                 .content(updateCheckResult.getUpdateTips())
@@ -87,8 +91,7 @@ public class StartActivity extends BaseActivity {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         Log.d(LOG_TAG, "start upgrade");
-                        mUpdateMgr.startUpdate();
-                        finish();
+                        mUpdateMgr.startUpdate(StartActivity.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
                     }
 
                     @Override
@@ -110,8 +113,7 @@ public class StartActivity extends BaseActivity {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         Log.d(LOG_TAG, "start upgrade");
-                        mUpdateMgr.startUpdate();
-                        finish();
+                        mUpdateMgr.startUpdate(StartActivity.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
                     }
 
                     @Override
@@ -137,4 +139,23 @@ public class StartActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    public void onDownloadBegin() {
+        Log.d(LOG_TAG, "download begin");
+    }
+
+    @Override
+    public void onDownloading(int percent) {
+        Log.d(LOG_TAG, "downloading: " + percent);
+    }
+
+    @Override
+    public void onDownloadSucc() {
+        Log.d(LOG_TAG, "download succ");
+    }
+
+    @Override
+    public void onDownloadError(Throwable err) {
+        Log.d(LOG_TAG, "download error" + err);
+    }
 }

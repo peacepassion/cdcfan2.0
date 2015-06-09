@@ -54,6 +54,8 @@
         <activity
             android:name="com.linuxclub.cdcfan.ui.CancelOrderActivity"
             android:label="@string/cancel_order"/>
+
+        <service android:name=".service.BackgroundNetworkService"/>
     </application>
 
 </manifest>

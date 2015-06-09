@@ -5,8 +5,11 @@ package com.linuxclub.cdcfan.config;
  */
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
+
 import com.linuxclub.cdcfan.R;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,6 +88,10 @@ public class Const {
         Map<String, String> map = new HashMap<String, String>(1);
         map.put(mRes.getString(R.string.cancel_order_param_orderid), orderID);
         return map;
+    }
+
+    public String getFullDownloadUrl(String path) {
+        return getDomain() + path;
     }
 
 }

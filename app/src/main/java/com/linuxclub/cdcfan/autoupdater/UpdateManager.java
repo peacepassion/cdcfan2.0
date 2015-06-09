@@ -5,10 +5,18 @@ package com.linuxclub.cdcfan.autoupdater;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.linuxclub.cdcfan.R;
+import com.linuxclub.cdcfan.persist.GlobalSharedPreferences;
+import com.linuxclub.cdcfan.service.BackgroundNetworkService;
+import com.linuxclub.cdcfan.service.ServiceConst;
 import com.linuxclub.cdcfan.utils.LogHelper;
+
+import java.io.File;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -19,16 +27,18 @@ import retrofit.client.Response;
 public class UpdateManager {
 
     private static final String LOG_TAG = LogHelper.getNativeSimpleLogTag(UpdateManager.class, LogHelper.DEFAULT_LOG_TAG);
-
     private static UpdateManager sInstance;
 
     private Context mContext;
-
+    private GlobalSharedPreferences mGlobalSharedPref;
     private RestAdapter mRestAdapter;
+    private String mApkFilePath;
+
 
     private UpdateManager(Context ctx) {
         mContext = ctx.getApplicationContext();
         mRestAdapter = new RestAdapter.Builder().setEndpoint(mContext.getString(R.string.portal)).setLogLevel(RestAdapter.LogLevel.FULL).build();
+        mGlobalSharedPref = GlobalSharedPreferences.getInstance(mContext.getApplicationContext());
     }
 
     public static UpdateManager getInstance(Context ctx) {
@@ -61,11 +71,20 @@ public class UpdateManager {
         });
     }
 
-    public void startUpdate() {
+    public void startUpdate(@NonNull UpdateListener listener, String apkUrl) {
+        mApkFilePath = new File(mContext.getExternalCacheDir().getAbsolutePath(), "cdcfan" + System.currentTimeMillis()).getAbsolutePath() + ".apk";
+        Log.d(LOG_TAG, "apk file path: " + mApkFilePath);
 
+        Intent intent = new Intent(ServiceConst.KEY_DOWNLOAD_FILE);
+        intent.setClass(mContext, BackgroundNetworkService.class);
+        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_UPDATE_RECEIVER, new UpdateReceiver(new Handler(), listener));
+        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_PATH, mApkFilePath);
+        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_APK_URL, apkUrl);
+        mContext.startService(intent);
     }
 
     public void skipVersion(int versionCode) {
-
+        mGlobalSharedPref.addSkipVersion("" + versionCode);
     }
+
 }

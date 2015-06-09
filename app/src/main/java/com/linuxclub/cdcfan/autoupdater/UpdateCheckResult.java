@@ -49,6 +49,14 @@ public class UpdateCheckResult {
         return "";
     }
 
+    @Override
+    public String toString() {
+        return "version code: " + mUpdateInfo.mVersionCode
+                + ", force update: " + mUpdateInfo.mForceUpdate
+                + ", apk url: " + mUpdateInfo.mApkUrl
+                + ", update tips: " + mUpdateInfo.mUpdateTips.mZhCN;
+    }
+
     private static class UpdateInfo {
         @SerializedName("versionCode")
         private String mVersionCode;
