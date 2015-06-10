@@ -1,10 +1,12 @@
 package com.linuxclub.cdcfan.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
 import com.baidu.mobstat.StatService;
@@ -21,6 +23,7 @@ import de.greenrobot.event.EventBus;
 public class StartActivity extends BaseActivity implements UpdateListener {
 
     private UpdateManager mUpdateMgr;
+    private MaterialDialog mDownloadingDlg;
 
     @Override
     protected int getLayout() {
@@ -140,18 +143,49 @@ public class StartActivity extends BaseActivity implements UpdateListener {
     }
 
     @Override
-    public void onDownloadBegin() {
+    public void onDownloadBegin(long size) {
         Log.d(LOG_TAG, "download begin");
+        new MaterialDialog.Builder(this)
+                .title(R.string.update_title3)
+                .content(R.string.update_content)
+                .contentGravity(GravityEnum.CENTER)
+                .progress(false, 100, false)
+                .cancelable(false)
+                .negativeText(R.string.update_cancel)
+                .callback(new ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        Log.w(LOG_TAG, "user cancel update");
+                    }
+                })
+                .showListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        mDownloadingDlg = (MaterialDialog) dialog;
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mDownloadingDlg = null;
+                    }
+                }).show();
     }
 
     @Override
     public void onDownloading(int percent) {
         Log.d(LOG_TAG, "downloading: " + percent);
+        if (mDownloadingDlg != null) {
+            mDownloadingDlg.setProgress(percent);
+        }
     }
 
     @Override
     public void onDownloadSucc() {
         Log.d(LOG_TAG, "download succ");
+        if (mDownloadingDlg != null) {
+            mDownloadingDlg.setContent(getString(R.string.download_succ));
+        }
     }
 
     @Override

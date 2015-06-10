@@ -21,7 +21,8 @@ public class UpdateReceiver extends ResultReceiver {
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
         if (resultCode == ServiceConst.DOWNLOAD_BEGIN) {
-            mUpdateListener.onDownloadBegin();
+            long size = resultData.getLong(ServiceConst.KEY_DOWNLOAD_FILE_APK_SIZE, 0);
+            mUpdateListener.onDownloadBegin(size);
         } else if (resultCode == ServiceConst.DOWNLOAD_RUNNING) {
             int percent = resultData.getInt(ServiceConst.KEY_DOWNLOAD_PERCENT, -1);
             if (percent == -1) {

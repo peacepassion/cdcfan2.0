@@ -56,9 +56,6 @@ public class BackgroundNetworkService extends IntentService {
         OkHttpClient httpClient = new OkHttpClient();
         Call call = httpClient.newCall(new Request.Builder().url(apkurl).get().build());
         try {
-            receiver.send(ServiceConst.DOWNLOAD_BEGIN, null);
-            sendDownloadPercent(receiver, 0);
-
             Response response = call.execute();
             if (response.isSuccessful() == false) {
                 Log.e(LOG_TAG, "fail to get apk, error code: " + response.code());
@@ -71,6 +68,10 @@ public class BackgroundNetworkService extends IntentService {
             byte[] buff = new byte[1024 * 4];
             long downloaded = 0;
             long target = response.body().contentLength();
+
+            Bundle bundle = new Bundle();
+            bundle.putLong(ServiceConst.KEY_DOWNLOAD_FILE_APK_SIZE, target / 8 / 1024);
+            receiver.send(ServiceConst.DOWNLOAD_BEGIN, bundle);
 
             Log.d(LOG_TAG, "body length: " + target);
 

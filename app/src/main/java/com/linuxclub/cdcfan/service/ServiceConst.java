@@ -7,6 +7,7 @@ public class ServiceConst {
 
     public static final String KEY_DOWNLOAD_FILE = "key_download_file";
     public static final String KEY_DOWNLOAD_FILE_APK_URL = "key_download_file_apk_url";
+    public static final String KEY_DOWNLOAD_FILE_APK_SIZE = "key_download_file_apk_size";
     public static final String KEY_DOWNLOAD_FILE_UPDATE_RECEIVER = "key_download_file_update_receiver";
     public static final int DOWNLOAD_BEGIN = 0;
     public static final int DOWNLOAD_ERROR = 1;

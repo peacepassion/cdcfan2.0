@@ -5,7 +5,11 @@ package com.linuxclub.cdcfan.autoupdater;
  */
 public interface UpdateListener {
 
-    void onDownloadBegin();
+    /**
+     *
+     * @param size target size, KB
+     */
+    void onDownloadBegin(long size);
 
     void onDownloading(int percent);
 
