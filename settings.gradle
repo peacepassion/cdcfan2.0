@@ -1,1 +1,1 @@
-include ':app', ':autoupdater'
+include ':app'

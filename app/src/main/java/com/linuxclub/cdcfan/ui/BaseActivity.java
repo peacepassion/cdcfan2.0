@@ -11,6 +11,7 @@ import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.config.Const;
 import com.linuxclub.cdcfan.config.PreferenceHelper;
+import com.linuxclub.cdcfan.persist.GlobalSharedPreferences;
 import com.linuxclub.cdcfan.utils.LogHelper;
 import com.gc.materialdesign.widgets.SnackBar;
 import retrofit.RestAdapter;
@@ -27,6 +28,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
     protected Const mConst;
     protected PreferenceHelper mPre;
+    protected GlobalSharedPreferences mGlobalSharedPref;
     protected Resources mRes;
     protected RestAdapter.Builder mRestBuilder;
 
@@ -44,7 +46,8 @@ public abstract class BaseActivity extends FragmentActivity {
     protected void initBasicData() {
         ButterKnife.inject(this);
         StatService.setDebugOn(true);
-        mPre = PreferenceHelper.getInstance(this);
+        mPre = PreferenceHelper.getInstance(this.getApplicationContext());
+        mGlobalSharedPref = GlobalSharedPreferences.getInstance(this.getApplicationContext());
         mRes = getResources();
         mConst = Const.getInstance(this);
         mRestBuilder = new Builder();
