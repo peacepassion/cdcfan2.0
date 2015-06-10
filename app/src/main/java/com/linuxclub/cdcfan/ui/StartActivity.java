@@ -24,6 +24,7 @@ public class StartActivity extends BaseActivity implements UpdateListener {
 
     private UpdateManager mUpdateMgr;
     private MaterialDialog mDownloadingDlg;
+    private boolean mIsForceUpdate;
 
     @Override
     protected int getLayout() {
@@ -36,6 +37,7 @@ public class StartActivity extends BaseActivity implements UpdateListener {
         EventBus.getDefault().register(this);
         mUpdateMgr = UpdateManager.getInstance(this.getApplicationContext());
         StatService.onEvent(this, mRes.getString(R.string.event_enter_start_acti), mRes.getString(R.string.event_enter_start_acti));
+        mIsForceUpdate = false;
 
         findViewById(R.id.logo).postDelayed(new Runnable() {
             @Override
@@ -61,6 +63,7 @@ public class StartActivity extends BaseActivity implements UpdateListener {
         if (updateCheckResult.isCheckSucc()) {
             Log.d(LOG_TAG, "check update succ");
             if (updateCheckResult.isForceUpdate()) {
+                mIsForceUpdate = true;
                 showForceUpdateDialog(updateCheckResult);
             } else {
                 try {
@@ -156,6 +159,7 @@ public class StartActivity extends BaseActivity implements UpdateListener {
                     @Override
                     public void onNegative(MaterialDialog dialog) {
                         Log.w(LOG_TAG, "user cancel update");
+                        mUpdateMgr.stopUpdate();
                     }
                 })
                 .showListener(new DialogInterface.OnShowListener() {
@@ -193,4 +197,15 @@ public class StartActivity extends BaseActivity implements UpdateListener {
     public void onDownloadError(Throwable err) {
         Log.d(LOG_TAG, "download error" + err);
     }
+
+    @Override
+    public void onDownloadCanceled() {
+        Log.d(LOG_TAG, "update cancel succ");
+        if (mIsForceUpdate) {
+            showRealToast(getString(R.string.force_update_fail));
+        } else {
+            goToLoginPage();
+        }
+    }
+
 }

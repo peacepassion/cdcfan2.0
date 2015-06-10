@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.linuxclub.cdcfan.autoupdater.UpdateManager;
 import com.linuxclub.cdcfan.utils.LogHelper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
@@ -28,8 +29,16 @@ public class BackgroundNetworkService extends IntentService {
 
     public static final String SERVICE_KEY = BackgroundNetworkService.class.getSimpleName();
 
+    private UpdateManager mUpdateMgr;
+
     public BackgroundNetworkService() {
         super(SERVICE_KEY);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mUpdateMgr = UpdateManager.getInstance(getApplicationContext());
     }
 
     @Override
@@ -76,6 +85,11 @@ public class BackgroundNetworkService extends IntentService {
             Log.d(LOG_TAG, "body length: " + target);
 
             while (downloaded < target) {
+                if (mUpdateMgr.isUpdateCanceled()) {
+                    receiver.send(ServiceConst.DOWNLOAD_CANCELED, null);
+                    return;
+                }
+
                 int readed = is.read(buff);
                 if (readed <= 0) {
                     break;
@@ -89,8 +103,12 @@ public class BackgroundNetworkService extends IntentService {
             is.close();
             file.close();
 
-            receiver.send(ServiceConst.DOWNLOAD_SUCC, null);
-
+            if (mUpdateMgr.isUpdateCanceled() == false) {
+                receiver.send(ServiceConst.DOWNLOAD_SUCC, null);
+            } else {
+                receiver.send(ServiceConst.DOWNLOAD_CANCELED, null);
+                return;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             sendDownloadError(receiver, e);

@@ -36,6 +36,8 @@ public class UpdateReceiver extends ResultReceiver {
         } else if (resultCode == ServiceConst.DOWNLOAD_SUCC) {
             mUpdateListener.onDownloadSucc();
             mUpdateMgr.install();
+        } else if (resultCode == ServiceConst.DOWNLOAD_CANCELED) {
+            mUpdateListener.onDownloadCanceled();
         } else {
             Exception e = (Exception) resultData.getSerializable(ServiceConst.KEY_DOWNLOAD_EXCEPTION);
             mUpdateListener.onDownloadError(e);

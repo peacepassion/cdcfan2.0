@@ -34,12 +34,14 @@ public class UpdateManager {
     private GlobalSharedPreferences mGlobalSharedPref;
     private RestAdapter mRestAdapter;
     private String mApkFilePath;
+    private boolean mIsCanceled;
 
 
     private UpdateManager(Context ctx) {
         mContext = ctx.getApplicationContext();
         mRestAdapter = new RestAdapter.Builder().setEndpoint(mContext.getString(R.string.portal)).setLogLevel(RestAdapter.LogLevel.FULL).build();
         mGlobalSharedPref = GlobalSharedPreferences.getInstance(mContext.getApplicationContext());
+        mIsCanceled = false;
     }
 
     public static UpdateManager getInstance(Context ctx) {
@@ -82,6 +84,14 @@ public class UpdateManager {
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_PATH, mApkFilePath);
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_APK_URL, apkUrl);
         mContext.startService(intent);
+    }
+
+    public synchronized void stopUpdate() {
+        mIsCanceled = true;
+    }
+
+    public synchronized boolean isUpdateCanceled() {
+        return mIsCanceled;
     }
 
     public void skipVersion(int versionCode) {

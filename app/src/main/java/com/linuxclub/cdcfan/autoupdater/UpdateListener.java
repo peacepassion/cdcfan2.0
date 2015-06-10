@@ -17,4 +17,6 @@ public interface UpdateListener {
 
     void onDownloadError(Throwable err);
 
+    void onDownloadCanceled();
+
 }

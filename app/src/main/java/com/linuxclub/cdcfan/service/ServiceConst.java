@@ -13,6 +13,7 @@ public class ServiceConst {
     public static final int DOWNLOAD_ERROR = 1;
     public static final int DOWNLOAD_RUNNING = 2;
     public static final int DOWNLOAD_SUCC = 3;
+    public static final int DOWNLOAD_CANCELED = 4;
     public static final String KEY_DOWNLOAD_PERCENT = "key_download_percent";
     public static final String KEY_DOWNLOAD_EXCEPTION = "key_download_exception";
     public static final String KEY_DOWNLOAD_FILE_PATH = "key_download_file_path";
