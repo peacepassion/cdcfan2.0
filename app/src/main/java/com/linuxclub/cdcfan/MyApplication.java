@@ -16,8 +16,6 @@ public class MyApplication extends Application {
         super.onCreate();
 
         initBasicData();
-
-        com.github.snowdream.android.util.Log.setTag(LogHelper.DEFAULT_LOG_TAG);
     }
 
     private void initBasicData() {

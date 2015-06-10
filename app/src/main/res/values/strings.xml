@@ -52,5 +52,11 @@
     <string name="update_skip">略过此版本</string>
     <string name="update_no2">暂不升级</string>
 
+    <string name="update_title3">正在下载</string>
+    <string name="update_content">已下载</string>
+    <string name="download_succ">下载成功</string>
+    <string name="update_cancel">取消升级</string>
+
+    <string name="force_update_fail">升级失败，无法继续使用，请重新尝试</string>
 
 </resources>
