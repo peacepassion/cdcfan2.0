@@ -1,5 +1,6 @@
 package com.linuxclub.cdcfan.autoupdater;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -12,10 +13,12 @@ import com.linuxclub.cdcfan.service.ServiceConst;
 public class UpdateReceiver extends ResultReceiver {
 
     private UpdateListener mUpdateListener;
+    private UpdateManager mUpdateMgr;
 
-    public UpdateReceiver(Handler handler, UpdateListener listener) {
+    public UpdateReceiver(Context ctx, Handler handler, UpdateListener listener) {
         super(handler);
         mUpdateListener = listener;
+        mUpdateMgr = UpdateManager.getInstance(ctx.getApplicationContext());
     }
 
     @Override
@@ -32,6 +35,7 @@ public class UpdateReceiver extends ResultReceiver {
             }
         } else if (resultCode == ServiceConst.DOWNLOAD_SUCC) {
             mUpdateListener.onDownloadSucc();
+            mUpdateMgr.install();
         } else {
             Exception e = (Exception) resultData.getSerializable(ServiceConst.KEY_DOWNLOAD_EXCEPTION);
             mUpdateListener.onDownloadError(e);

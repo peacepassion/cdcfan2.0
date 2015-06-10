@@ -6,6 +6,7 @@ package com.linuxclub.cdcfan.autoupdater;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -77,7 +78,7 @@ public class UpdateManager {
 
         Intent intent = new Intent(ServiceConst.KEY_DOWNLOAD_FILE);
         intent.setClass(mContext, BackgroundNetworkService.class);
-        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_UPDATE_RECEIVER, new UpdateReceiver(new Handler(), listener));
+        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_UPDATE_RECEIVER, new UpdateReceiver(mContext, new Handler(), listener));
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_PATH, mApkFilePath);
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_APK_URL, apkUrl);
         mContext.startService(intent);
@@ -85,6 +86,13 @@ public class UpdateManager {
 
     public void skipVersion(int versionCode) {
         mGlobalSharedPref.addSkipVersion("" + versionCode);
+    }
+
+    public void install() {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setDataAndType(Uri.parse("file://" + mApkFilePath), "application/vnd.android.package-archive");
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(i);
     }
 
 }

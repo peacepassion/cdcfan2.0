@@ -186,6 +186,7 @@ public class StartActivity extends BaseActivity implements UpdateListener {
         if (mDownloadingDlg != null) {
             mDownloadingDlg.setContent(getString(R.string.download_succ));
         }
+        finish();
     }
 
     @Override
