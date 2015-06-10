@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="track_key">129de1ebc7</string>
+
+    <!-- event definition -->
+    <string name="event_enter_start_acti">event_enter_start_acti</string>
+    <string name="event_order">event_order</string>
+    <string name="event_check_order">event_check_order</string>
+    <string name="event_cancel_order">event_cancel_order</string>
+    
+</resources>

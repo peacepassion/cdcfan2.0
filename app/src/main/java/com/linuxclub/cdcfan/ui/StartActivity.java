@@ -1,25 +1,30 @@
 package com.linuxclub.cdcfan.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+
+import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
-import com.gc.materialdesign.widgets.Dialog;
-import com.github.snowdream.android.app.DownloadTask;
-import com.github.snowdream.android.app.updater.DefaultUpdateListener;
-import com.github.snowdream.android.app.updater.UpdateFormat;
-import com.github.snowdream.android.app.updater.UpdateInfo;
-import com.github.snowdream.android.app.updater.UpdateManager;
-import com.github.snowdream.android.app.updater.UpdateOptions;
-import com.github.snowdream.android.app.updater.UpdatePeriod;
+import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.R;
+import com.linuxclub.cdcfan.autoupdater.UpdateCheckResult;
+import com.linuxclub.cdcfan.autoupdater.UpdateListener;
+import com.linuxclub.cdcfan.autoupdater.UpdateManager;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by peace_da on 2015/5/8.
  */
-public class StartActivity extends BaseActivity {
+public class StartActivity extends BaseActivity implements UpdateListener {
+
+    private UpdateManager mUpdateMgr;
+    private MaterialDialog mDownloadingDlg;
+    private boolean mIsForceUpdate;
 
     @Override
     protected int getLayout() {
@@ -29,6 +34,10 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+        mUpdateMgr = UpdateManager.getInstance(this.getApplicationContext());
+        StatService.onEvent(this, mRes.getString(R.string.event_enter_start_acti), mRes.getString(R.string.event_enter_start_acti));
+        mIsForceUpdate = false;
 
         findViewById(R.id.logo).postDelayed(new Runnable() {
             @Override
@@ -38,114 +47,165 @@ public class StartActivity extends BaseActivity {
         }, 3000);
     }
 
-    private void checkAppAvailability() {
-        String url = mConst.getUpdateInfoUrl();
-        Log.d(LOG_TAG, "check update info url: " + url);
-        UpdateOptions options = new UpdateOptions.Builder(this)
-                .checkUrl(url)
-                .updateFormat(UpdateFormat.JSON)
-                .updatePeriod(new UpdatePeriod(UpdatePeriod.EACH_TIME))
-                .checkPackageName(true)
-                .build();
-        new UpdateManager(this).check(this, options, this.new UpdateListener());
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
-    private class UpdateListener extends DefaultUpdateListener {
+    private void checkAppAvailability() {
+        mUpdateMgr.startCheckUpdate();
+    }
 
-        @Override
-        public void onStart() {
-            Log.d(LOG_TAG, "start checking update info");
-        }
-
-        @Override
-        public void onFinish() {
-            Log.d(LOG_TAG, "finish checking update info");
-        }
-
-        @Override
-        public void onError(Throwable thr) {
-            super.onError(thr);
-            Log.d(LOG_TAG, "http error");
+    public void onEventMainThread(UpdateCheckResult updateCheckResult) {
+        Log.d(LOG_TAG, "check update returns");
+        Log.d(LOG_TAG, "result: " + updateCheckResult);
+        if (updateCheckResult.isCheckSucc()) {
+            Log.d(LOG_TAG, "check update succ");
+            if (updateCheckResult.isForceUpdate()) {
+                mIsForceUpdate = true;
+                showForceUpdateDialog(updateCheckResult);
+            } else {
+                try {
+                    int versionCode = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+                    Log.d(LOG_TAG, "self version code: " + versionCode + ", get version: " + updateCheckResult.getVersionCode());
+                    if (mGlobalSharedPref.getSkipVersions().contains("" + versionCode) == false
+                            && versionCode < updateCheckResult.getVersionCode()) {
+                        showUpdateDialog(updateCheckResult);
+                    } else {
+                        goToLoginPage();
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                    goToLoginPage();
+                }
+            }
+        } else {
+            Log.w(LOG_TAG, "check update fail");
             showRealToast(mRes.getString(R.string.conn_fail));
-            StartActivity.this.finish();
-        }
-
-        @Override
-        public void onShowUpdateUI(final UpdateInfo info) {
-            // change the info url for the server returns only url path
-            info.setApkUrl(mConst.getDomain() + info.getApkUrl());
-            Log.d(LOG_TAG, "new apk download url: " + info.getApkUrl());
-            new MaterialDialog.Builder(StartActivity.this)
-                    .title(mRes.getString(R.string.update_title2))
-                    .content(info.getUpdateTips().get("zh_CN"))
-                    .positiveText(mRes.getString(R.string.update_ok))
-                    .negativeText(mRes.getString(R.string.update_no2))
-                    .neutralText(mRes.getString(R.string.update_skip))
-                    .callback(new ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            Log.d(LOG_TAG, "start upgrade");
-                            informUpdate(info);
-                            finish();
-                        }
-
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            Log.d(LOG_TAG, "cancel upgrade");
-                            dialog.dismiss();
-                            startActivity(new Intent(StartActivity.this, LoginActivity.class));
-                            finish();
-                        }
-
-                        @Override
-                        public void onNeutral(MaterialDialog dialog) {
-                            Log.d(LOG_TAG, "skip this version");
-                            informSkip(info);
-                            startActivity(new Intent(StartActivity.this, LoginActivity.class));
-                            finish();
-                        }
-                    }).show();
-        }
-
-        @Override
-        public void onShowForceUpdateUI(final UpdateInfo info) {
-            new MaterialDialog.Builder(StartActivity.this)
-                    .title(mRes.getString(R.string.update_title))
-                    .content(info.getUpdateTips().get("zh_CN"))
-                    .positiveText(mRes.getString(R.string.update_ok))
-                    .negativeText(mRes.getString(R.string.update_no))
-                    .callback(new ButtonCallback() {
-                        @Override
-                        public void onPositive(MaterialDialog dialog) {
-                            Log.d(LOG_TAG, "start upgrade");
-                            informUpdate(info);
-                            finish();
-                        }
-
-                        @Override
-                        public void onNegative(MaterialDialog dialog) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    }).show();
-        }
-
-        @Override
-        public void onShowNoUpdateUI() {
-            startActivity(new Intent(StartActivity.this, LoginActivity.class));
             finish();
         }
+    }
 
-        @Override
-        public void onShowUpdateProgressUI(UpdateInfo info, DownloadTask task, int progress) {
-            super.onShowUpdateProgressUI(info, task, progress);
+    public void showForceUpdateDialog(final UpdateCheckResult updateCheckResult) {
+        new MaterialDialog.Builder(StartActivity.this)
+                .title(mRes.getString(R.string.update_title))
+                .content(updateCheckResult.getUpdateTips())
+                .positiveText(mRes.getString(R.string.update_ok))
+                .negativeText(mRes.getString(R.string.update_no))
+                .callback(new ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        Log.d(LOG_TAG, "start upgrade");
+                        mUpdateMgr.startUpdate(StartActivity.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                }).show();
+    }
+
+    public void showUpdateDialog(final UpdateCheckResult updateCheckResult) {
+        new MaterialDialog.Builder(StartActivity.this)
+                .title(mRes.getString(R.string.update_title2))
+                .content(updateCheckResult.getUpdateTips())
+                .positiveText(mRes.getString(R.string.update_ok))
+                .negativeText(mRes.getString(R.string.update_no2))
+                .neutralText(mRes.getString(R.string.update_skip))
+                .callback(new ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        Log.d(LOG_TAG, "start upgrade");
+                        mUpdateMgr.startUpdate(StartActivity.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
+                    }
+
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        Log.d(LOG_TAG, "cancel upgrade");
+                        dialog.dismiss();
+                        startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                        finish();
+                    }
+
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        Log.d(LOG_TAG, "skip this version");
+                        mUpdateMgr.skipVersion(updateCheckResult.getVersionCode());
+                        startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                }).show();
+    }
+
+    private void goToLoginPage() {
+        startActivity(new Intent(StartActivity.this, LoginActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onDownloadBegin(long size) {
+        Log.d(LOG_TAG, "download begin");
+        new MaterialDialog.Builder(this)
+                .title(R.string.update_title3)
+                .content(R.string.update_content)
+                .contentGravity(GravityEnum.CENTER)
+                .progress(false, 100, false)
+                .cancelable(false)
+                .negativeText(R.string.update_cancel)
+                .callback(new ButtonCallback() {
+                    @Override
+                    public void onNegative(MaterialDialog dialog) {
+                        Log.w(LOG_TAG, "user cancel update");
+                        mUpdateMgr.stopUpdate();
+                    }
+                })
+                .showListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        mDownloadingDlg = (MaterialDialog) dialog;
+                    }
+                })
+                .dismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mDownloadingDlg = null;
+                    }
+                }).show();
+    }
+
+    @Override
+    public void onDownloading(int percent) {
+        Log.d(LOG_TAG, "downloading: " + percent);
+        if (mDownloadingDlg != null) {
+            mDownloadingDlg.setProgress(percent);
         }
+    }
 
-        @Override
-        public void ExitApp() {
-
+    @Override
+    public void onDownloadSucc() {
+        Log.d(LOG_TAG, "download succ");
+        if (mDownloadingDlg != null) {
+            mDownloadingDlg.setContent(getString(R.string.download_succ));
         }
+        finish();
+    }
 
+    @Override
+    public void onDownloadError(Throwable err) {
+        Log.d(LOG_TAG, "download error" + err);
+    }
+
+    @Override
+    public void onDownloadCanceled() {
+        Log.d(LOG_TAG, "update cancel succ");
+        if (mIsForceUpdate) {
+            showRealToast(getString(R.string.force_update_fail));
+        } else {
+            goToLoginPage();
+        }
     }
 
 }
