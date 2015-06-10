@@ -52,7 +52,6 @@ task run(type: Exec, dependsOn: 'installDebug') {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':autoupdater')
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.android.support:support-v4:22.0.0'
     compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
