@@ -5,20 +5,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 
+import com.linuxclub.cdcfan.MyApplication;
 import com.linuxclub.cdcfan.service.ServiceConst;
+
+import javax.inject.Inject;
 
 /**
  * Created by peace_da on 2015/6/9.
  */
 public class UpdateReceiver extends ResultReceiver {
 
-    private UpdateListener mUpdateListener;
-    private UpdateManager mUpdateMgr;
+    UpdateListener mUpdateListener;
+
+    @Inject
+    UpdateManager mUpdateMgr;
 
     public UpdateReceiver(Context ctx, Handler handler, UpdateListener listener) {
         super(handler);
         mUpdateListener = listener;
-        mUpdateMgr = UpdateManager.getInstance(ctx.getApplicationContext());
+        ((MyApplication) ctx.getApplicationContext()).inject(this);
     }
 
     @Override

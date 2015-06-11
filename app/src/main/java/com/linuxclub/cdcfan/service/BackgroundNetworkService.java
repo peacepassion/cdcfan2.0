@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.linuxclub.cdcfan.MyApplication;
 import com.linuxclub.cdcfan.autoupdater.UpdateManager;
 import com.linuxclub.cdcfan.utils.LogHelper;
 import com.squareup.okhttp.Call;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 /**
  * Created by peace_da on 2015/6/8.
  */
@@ -29,7 +32,8 @@ public class BackgroundNetworkService extends IntentService {
 
     public static final String SERVICE_KEY = BackgroundNetworkService.class.getSimpleName();
 
-    private UpdateManager mUpdateMgr;
+    @Inject
+    UpdateManager mUpdateMgr;
 
     public BackgroundNetworkService() {
         super(SERVICE_KEY);
@@ -38,7 +42,7 @@ public class BackgroundNetworkService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        mUpdateMgr = UpdateManager.getInstance(getApplicationContext());
+        ((MyApplication) getApplication()).inject(this);
     }
 
     @Override
