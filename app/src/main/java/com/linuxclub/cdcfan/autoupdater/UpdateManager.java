@@ -4,6 +4,7 @@ package com.linuxclub.cdcfan.autoupdater;
  * Created by peace_da on 2015/6/8.
  */
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,40 +20,34 @@ import com.linuxclub.cdcfan.utils.LogHelper;
 
 import java.io.File;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+@Singleton
 public class UpdateManager {
 
     private static final String LOG_TAG = LogHelper.getNativeSimpleLogTag(UpdateManager.class, LogHelper.DEFAULT_LOG_TAG);
-    private static UpdateManager sInstance;
 
-    private Context mContext;
-    private GlobalSharedPreferences mGlobalSharedPref;
-    private RestAdapter mRestAdapter;
+    @Inject
+    Application mContext;
+    @Inject
+    GlobalSharedPreferences mGlobalSharedPref;
+    @Inject
+    RestAdapter mRestAdapter;
+
     private String mApkFilePath;
     private boolean mIsCanceled;
 
 
-    private UpdateManager(Context ctx) {
-        mContext = ctx.getApplicationContext();
-        mRestAdapter = new RestAdapter.Builder().setEndpoint(mContext.getString(R.string.portal)).setLogLevel(RestAdapter.LogLevel.FULL).build();
-        mGlobalSharedPref = GlobalSharedPreferences.getInstance(mContext.getApplicationContext());
+    @Inject
+    UpdateManager() {
         mIsCanceled = false;
-    }
-
-    public static UpdateManager getInstance(Context ctx) {
-        if (sInstance == null) {
-            synchronized (UpdateManager.class) {
-                if (sInstance == null) {
-                    sInstance = new UpdateManager(ctx);
-                }
-            }
-        }
-        return sInstance;
     }
 
     public void startCheckUpdate() {

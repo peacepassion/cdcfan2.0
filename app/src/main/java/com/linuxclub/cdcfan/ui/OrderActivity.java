@@ -108,7 +108,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
             });
             showLoadingPage(true);
         } else if (id == R.id.log_out) {
-            mPre.setKeyLastUserName("");
+            mGlobalSharedPref.setKeyLastUserName("");
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
@@ -175,7 +175,7 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
         }
     }
 
-    static enum OrderSummary {
+    enum OrderSummary {
         SUCC(R.string.succ_des),
         EXCEED(R.string.exceed_des),
         OVER_TIME(R.string.overtime_des),
@@ -189,21 +189,6 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
 
         public String getDescription(Resources res) {
             return res.getString(mDescriptionID);
-        }
-    }
-
-    static enum OrderType {
-        DINNER(R.string.order_type_dinner),
-        LUNCH(R.string.order_type_lunch);
-
-        private int mDesID;
-
-        OrderType(int id) {
-            mDesID = id;
-        }
-
-        public String getDescription(Resources res) {
-            return res.getString(mDesID);
         }
     }
 
