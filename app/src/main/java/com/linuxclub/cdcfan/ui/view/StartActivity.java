@@ -8,6 +8,7 @@ import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.MaterialDialog.ButtonCallback;
 import com.linuxclub.cdcfan.R;
+import com.linuxclub.cdcfan.ui.presenter.BasePresenter;
 import com.linuxclub.cdcfan.ui.presenter.StartPresenter;
 
 import javax.inject.Inject;
@@ -20,18 +21,19 @@ public class StartActivity extends BaseActivity implements StartView {
     @Inject
     StartPresenter mPresenter;
 
-    private MaterialDialog mDownloadingDlg;
-
     @Override
     protected int getLayout() {
         return R.layout.start;
     }
 
     @Override
+    protected BasePresenter getPresenter() {
+        return mPresenter;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mPresenter.onCreate(this);
     }
 
     @Override
@@ -42,10 +44,10 @@ public class StartActivity extends BaseActivity implements StartView {
     @Override
     public void showForceUpdateDialog(String updateTips, ButtonCallback callback) {
         new MaterialDialog.Builder(StartActivity.this)
-                .title(mRes.getString(R.string.update_title))
+                .title(getString(R.string.update_title))
                 .content(updateTips)
-                .positiveText(mRes.getString(R.string.update_ok))
-                .negativeText(mRes.getString(R.string.update_no))
+                .positiveText(getString(R.string.update_ok))
+                .negativeText(getString(R.string.update_no))
                 .callback(new ButtonCallback() {
                 }).show();
     }
@@ -53,11 +55,11 @@ public class StartActivity extends BaseActivity implements StartView {
     @Override
     public void showUpdateDialog(String updateTips, MaterialDialog.ButtonCallback callback) {
         new MaterialDialog.Builder(StartActivity.this)
-                .title(mRes.getString(R.string.update_title2))
+                .title(getString(R.string.update_title2))
                 .content(updateTips)
-                .positiveText(mRes.getString(R.string.update_ok))
-                .negativeText(mRes.getString(R.string.update_no2))
-                .neutralText(mRes.getString(R.string.update_skip))
+                .positiveText(getString(R.string.update_ok))
+                .negativeText(getString(R.string.update_no2))
+                .neutralText(getString(R.string.update_skip))
                 .callback(callback).show();
     }
 

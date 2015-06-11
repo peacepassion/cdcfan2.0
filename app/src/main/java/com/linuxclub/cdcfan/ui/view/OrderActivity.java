@@ -1,28 +1,26 @@
 package com.linuxclub.cdcfan.ui.view;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import com.baidu.mobstat.StatService;
+
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
-import com.linuxclub.cdcfan.httptask.HttpTaskCallback;
-import com.linuxclub.cdcfan.httptask.OrderTask;
-import com.linuxclub.cdcfan.model.OrderResult;
 import com.linuxclub.cdcfan.model.User;
-import org.json.JSONException;
-import org.json.JSONObject;
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import com.linuxclub.cdcfan.ui.presenter.BasePresenter;
+import com.linuxclub.cdcfan.ui.presenter.LoginPresenter;
+import com.linuxclub.cdcfan.ui.presenter.OrderPresenter;
 
-public class OrderActivity extends LoadingBaseActivity implements OnClickListener, HttpTaskCallback {
+import javax.inject.Inject;
+
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+public class OrderActivity extends LoadingBaseActivity implements OnClickListener, OrderView {
+
+    @Inject
+    OrderPresenter mOrderPresenter;
 
     @InjectView(R.id.title)
     TextView mBasicInfo;
@@ -36,33 +34,31 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     @InjectView(R.id.check_order)
     Button mCheckOrderBtn;
 
-    private OrderSummary mOrderSummary;
-
-    User mUser;
-
     @Override
     protected int getLayout() {
         return R.layout.order;
     }
 
     @Override
+    protected BasePresenter getPresenter() {
+        return mOrderPresenter;
+    }
+
+    @Override
     protected void initBasicData() {
         super.initBasicData();
-
-        Intent intent = getIntent();
-        mUser = new User();
-        mUser.psid = intent.getStringExtra(LoginActivity.KEY_PSID);
-        mUser.name = intent.getStringExtra(LoginActivity.KEY_NAME);
-        mUser.depcode = intent.getStringExtra(LoginActivity.KEY_DEPCODE);
+        mOrderPresenter.onBasicDataInit(getIntent());
     }
 
     @Override
     protected void initView() {
         super.initView();
-        mBasicInfo.setText(mUser.name + " / " + mUser.depcode);
+        mOrderPresenter.onViewInit();
+    }
 
-        showOrderSuccPage(false);
-        showOrderFailPage(false);
+    @Override
+    public void showBasiccInfo(User user) {
+        mBasicInfo.setText(user.name + " / " + user.depcode);
     }
 
     @Override
@@ -75,120 +71,42 @@ public class OrderActivity extends LoadingBaseActivity implements OnClickListene
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.order) {
-            StatService.onEvent(this, mRes.getString(R.string.event_order), mRes.getString(R.string.event_order));
-            RestAdapter ra = mRestBuilder.build();
-            OrderTask ot = ra.create(OrderTask.class);
-            ot.order(mUser.psid, mUser.depcode, mRes.getString(R.string.order_param_type_def_val), new Callback<OrderResult>() {
-                @Override
-                public void success(OrderResult orderResult, Response response) {
-                    showLoadingPage(false);
-                    if (orderResult.succeed_count > 0) {
-                        mOrderSummary = OrderSummary.SUCC;
-                        showOrderSuccPage(true);
-                    } else {
-                        if (orderResult.exceed_count > 0) {
-                            mOrderSummary = OrderSummary.EXCEED;
-                        } else if (orderResult.rejected_count > 0) {
-                            mOrderSummary = OrderSummary.OVER_TIME;
-                        } else {
-                            mOrderSummary = OrderSummary.FAIL;
-                        }
-                        showOrderFailPage(true);
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.d("CDC", "error: " + error);
-                    showLoadingPage(false);
-                    mOrderSummary = OrderSummary.FAIL;
-                    showOrderFailPage(true);
-                }
-            });
-            showLoadingPage(true);
+            mOrderPresenter.order();
         } else if (id == R.id.log_out) {
-            mGlobalSharedPref.setKeyLastUserName("");
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
+            mOrderPresenter.logOut();
         } else if (id == R.id.check_order) {
-            StatService.onEvent(this, mRes.getString(R.string.event_check_order), mRes.getString(R.string.event_check_order));
-            Intent intent = new Intent(this, CancelOrderActivity.class);
-            intent.putExtra(LoginActivity.KEY_PSID, mUser.psid);
-            startActivity(intent);
+            mOrderPresenter.checkOrder();
         }
     }
 
     @Override
-    public void onSucc(int statusCode, String responseBody) {
-        Log.d("CDC", "response: " + responseBody);
-        showLoadingPage(false);
-        if (parseResult(responseBody)) {
-            showOrderSuccPage(true);
-        } else {
-            showOrderFailPage(true);
+    public void showOrderSuccPage(boolean flag) {
+        if (flag) {
+            showFixToast(getString(R.string.order_succ));
         }
     }
 
     @Override
-    public void onErr(int responseCode, String responseBody) {
-        Log.d("CDC", "response: " + responseBody);
-        showLoadingPage(false);
+    public void gotoCheckOrderPage(User user) {
+        Intent intent = new Intent(this, CancelOrderActivity.class);
+        intent.putExtra(LoginPresenter.KEY_PSID, user.psid);
+        startActivity(intent);
     }
 
-    private boolean parseResult(String jsonObj) {
-        try {
-            JSONObject obj = new JSONObject(jsonObj);
-            int num = obj.getInt("succeed_count");
-            if (num > 0) {
-                mOrderSummary = OrderSummary.SUCC;
-                return true;
-            }
-            num = obj.getInt("exceed_count");
-            if (num > 0) {
-                mOrderSummary = OrderSummary.EXCEED;
-                return false;
-            }
-            num = obj.getInt("rejected_count");
-            if (num > 0) {
-                mOrderSummary = OrderSummary.OVER_TIME;
-                return false;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mOrderSummary = OrderSummary.FAIL;
-        return false;
-    }
 
-    private void showOrderSuccPage(boolean flag) {
+    @Override
+    public void showOrderFailPage(boolean flag, OrderPresenter.OrderSummary orderSummary) {
         if (flag) {
-            showFixToast(mRes.getString(R.string.order_succ));
+            showFixToast(String.format(getString(R.string.order_fail), orderSummary.getDescription(getApplication())));
         }
     }
 
-    private void showOrderFailPage(boolean flag) {
-        if (flag) {
-            showFixToast(String.format(mRes.getString(R.string.order_fail), mOrderSummary.getDescription(mRes)));
-        }
-    }
-
-    enum OrderSummary {
-        SUCC(R.string.succ_des),
-        EXCEED(R.string.exceed_des),
-        OVER_TIME(R.string.overtime_des),
-        FAIL(R.string.fail_des);
-
-        private int mDescriptionID;
-
-        OrderSummary(int des) {
-            mDescriptionID = des;
-        }
-
-        public String getDescription(Resources res) {
-            return res.getString(mDescriptionID);
-        }
+    @Override
+    public void gotoLoginPage() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
 }
