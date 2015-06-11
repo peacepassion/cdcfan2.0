@@ -41,7 +41,7 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     private void checkJumpToOrderPage() {
-        String userName = mPre.getLastUserName();
+        String userName = mGlobalSharedPref.getLastUserName();
         if (userName.equals("") == false) {
             mUserName = userName;
             startLogin();
@@ -117,7 +117,7 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     }
 
     private void saveUserInfo(User user) {
-        mPre.setKeyLastUserName(user.name);
+        mGlobalSharedPref.setKeyLastUserName(user.name);
     }
 
 }

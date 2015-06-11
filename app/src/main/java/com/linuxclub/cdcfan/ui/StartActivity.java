@@ -15,6 +15,8 @@ import com.linuxclub.cdcfan.autoupdater.UpdateCheckResult;
 import com.linuxclub.cdcfan.autoupdater.UpdateListener;
 import com.linuxclub.cdcfan.autoupdater.UpdateManager;
 
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -22,7 +24,8 @@ import de.greenrobot.event.EventBus;
  */
 public class StartActivity extends BaseActivity implements UpdateListener {
 
-    private UpdateManager mUpdateMgr;
+    @Inject
+    UpdateManager mUpdateMgr;
     private MaterialDialog mDownloadingDlg;
     private boolean mIsForceUpdate;
 
@@ -35,7 +38,6 @@ public class StartActivity extends BaseActivity implements UpdateListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        mUpdateMgr = UpdateManager.getInstance(this.getApplicationContext());
         StatService.onEvent(this, mRes.getString(R.string.event_enter_start_acti), mRes.getString(R.string.event_enter_start_acti));
         mIsForceUpdate = false;
 

@@ -3,9 +3,10 @@ package com.linuxclub.cdcfan.config;
 /**
  * Created by peace_da on 2015/5/8.
  */
+
+import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.Uri;
 
 import com.linuxclub.cdcfan.R;
 
@@ -13,27 +14,17 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class Const {
 
-    private static Const sInstance;
+    @Inject
+    Application mContext;
+    @Inject
+    Resources mRes;
 
-    private Context mContext;
-    private Resources mRes;
-
-    private Const(Context ctx) {
-        mContext = ctx;
-        mRes = mContext.getResources();
-    }
-
-    public static Const getInstance(Context ctx) {
-        if (sInstance == null) {
-            synchronized(Const.class) {
-                if (sInstance == null) {
-                    sInstance = new Const(ctx);
-                }
-            }
-        }
-        return sInstance;
+    @Inject
+    Const() {
     }
 
     public String getDomain() {

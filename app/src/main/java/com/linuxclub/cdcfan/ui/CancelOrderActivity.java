@@ -5,8 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import butterknife.InjectView;
-import butterknife.OnClick;
+
 import com.baidu.mobstat.StatService;
 import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
@@ -14,13 +13,16 @@ import com.linuxclub.cdcfan.httptask.CancelOrderTask;
 import com.linuxclub.cdcfan.httptask.CheckOrderTask;
 import com.linuxclub.cdcfan.model.CacelOrderResult;
 import com.linuxclub.cdcfan.model.Order;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by peace_da on 2015/4/15.

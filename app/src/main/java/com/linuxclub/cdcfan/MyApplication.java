@@ -1,15 +1,17 @@
 package com.linuxclub.cdcfan;
 
 import android.app.Application;
-import android.content.res.Resources;
-import com.linuxclub.cdcfan.utils.LogHelper;
+
+import com.linuxclub.cdcfan.module.AppModule;
+
+import dagger.ObjectGraph;
 
 /**
  * Created by peace_da on 2015/5/9.
  */
 public class MyApplication extends Application {
 
-    private Resources mRes;
+    private ObjectGraph mObjectGraph;
 
     @Override
     public void onCreate() {
@@ -19,7 +21,17 @@ public class MyApplication extends Application {
     }
 
     private void initBasicData() {
-        mRes = getResources();
+        mObjectGraph = ObjectGraph.create(getModules());
+    }
+
+    private Object[] getModules() {
+        return new Object[]{
+                new AppModule(this)
+        };
+    }
+
+    public void inject(Object obj) {
+        mObjectGraph.inject(obj);
     }
 
 }
