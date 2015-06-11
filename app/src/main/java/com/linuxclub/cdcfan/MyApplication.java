@@ -1,6 +1,7 @@
 package com.linuxclub.cdcfan;
 
 import android.app.Application;
+import android.os.Handler;
 
 import com.linuxclub.cdcfan.module.AppModule;
 
@@ -12,6 +13,7 @@ import dagger.ObjectGraph;
 public class MyApplication extends Application {
 
     private ObjectGraph mObjectGraph;
+    private Handler mHandler;
 
     @Override
     public void onCreate() {
@@ -22,6 +24,7 @@ public class MyApplication extends Application {
 
     private void initBasicData() {
         mObjectGraph = ObjectGraph.create(getModules());
+        mHandler = new Handler();
     }
 
     private Object[] getModules() {
@@ -32,6 +35,14 @@ public class MyApplication extends Application {
 
     public void inject(Object obj) {
         mObjectGraph.inject(obj);
+    }
+
+    public void runOnMainThread(Runnable task) {
+        mHandler.post(task);
+    }
+
+    public void runOnMainThread(Runnable task, long delay) {
+        mHandler.postDelayed(task, delay);
     }
 
 }

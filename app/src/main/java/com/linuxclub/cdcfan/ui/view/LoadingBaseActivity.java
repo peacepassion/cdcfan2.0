@@ -1,4 +1,4 @@
-package com.linuxclub.cdcfan.ui;
+package com.linuxclub.cdcfan.ui.view;
 
 import android.view.View;
 import butterknife.InjectView;

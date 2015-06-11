@@ -1,4 +1,4 @@
-package com.linuxclub.cdcfan.ui;
+package com.linuxclub.cdcfan.ui.view;
 
 import android.content.Intent;
 import android.util.Log;

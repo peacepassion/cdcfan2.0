@@ -1,8 +1,7 @@
-package com.linuxclub.cdcfan.ui;
+package com.linuxclub.cdcfan.ui.view;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.telephony.ServiceState;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
