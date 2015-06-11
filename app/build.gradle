@@ -47,7 +47,7 @@ android {
 }
 
 task run(type: Exec, dependsOn: 'installDebug') {
-    commandLine 'adb', 'shell', 'am', 'start', '-n', 'com.linuxclub.cdcfan/com.linuxclub.cdcfan.ui.StartActivity', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER'
+    commandLine 'adb', 'shell', 'am', 'start', '-n', 'com.linuxclub.cdcfan/com.linuxclub.cdcfan.ui.view.StartActivity', '-a', 'android.intent.action.MAIN', '-c', 'android.intent.category.LAUNCHER'
 }
 
 dependencies {

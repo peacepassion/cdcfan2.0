@@ -33,7 +33,7 @@
             android:name="BaiduMobAd_EXCEPTION_LOG"
             android:value="true" />
 
-        <activity android:name="com.linuxclub.cdcfan.ui.StartActivity">
+        <activity android:name=".ui.view.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,16 +41,16 @@
         </activity>
 
         <activity
-            android:name="com.linuxclub.cdcfan.ui.LoginActivity"
+            android:name=".ui.view.LoginActivity"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"></activity>
 
         <activity
-            android:name="com.linuxclub.cdcfan.ui.OrderActivity"
+            android:name=".ui.view.OrderActivity"
             android:label="@string/title_activity_menu"></activity>
 
         <activity
-            android:name="com.linuxclub.cdcfan.ui.CancelOrderActivity"
+            android:name=".ui.view.CancelOrderActivity"
             android:label="@string/cancel_order" />
 
         <service android:name=".service.BackgroundNetworkService" />
