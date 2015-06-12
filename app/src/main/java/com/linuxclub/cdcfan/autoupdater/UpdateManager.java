@@ -41,6 +41,8 @@ public class UpdateManager {
     @Inject
     RestAdapter mRestAdapter;
 
+    private UpdateReceiver mUpdateReceiver;
+
     private String mApkFilePath;
     private boolean mIsCanceled;
 
@@ -69,13 +71,16 @@ public class UpdateManager {
         });
     }
 
-    public void startUpdate(@NonNull UpdateListener listener, String apkUrl) {
+    public void startUpdate(String apkUrl) {
         mApkFilePath = new File(mContext.getExternalCacheDir().getAbsolutePath(), "cdcfan" + System.currentTimeMillis()).getAbsolutePath() + ".apk";
         Log.d(LOG_TAG, "apk file path: " + mApkFilePath);
 
+        if (mUpdateReceiver == null) {
+            throw new IllegalArgumentException("register update listener first");
+        }
         Intent intent = new Intent(ServiceConst.KEY_DOWNLOAD_FILE);
         intent.setClass(mContext, BackgroundNetworkService.class);
-        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_UPDATE_RECEIVER, new UpdateReceiver(mContext, new Handler(), listener));
+        intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_UPDATE_RECEIVER, mUpdateReceiver);
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_PATH, mApkFilePath);
         intent.putExtra(ServiceConst.KEY_DOWNLOAD_FILE_APK_URL, apkUrl);
         mContext.startService(intent);
@@ -83,6 +88,16 @@ public class UpdateManager {
 
     public synchronized void stopUpdate() {
         mIsCanceled = true;
+    }
+
+    public void registerUpdateListener(@NonNull UpdateListener listener) {
+        mUpdateReceiver = new UpdateReceiver(mContext, new Handler(), listener);
+    }
+
+    public void unregisterUpdateReceiver(UpdateListener listener) {
+        if (mUpdateReceiver.getListener() == listener) {
+            mUpdateReceiver.setListener(null);
+        }
     }
 
     public synchronized boolean isUpdateCanceled() {
