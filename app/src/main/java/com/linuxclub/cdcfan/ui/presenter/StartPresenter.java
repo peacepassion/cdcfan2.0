@@ -43,6 +43,7 @@ public class StartPresenter extends EmptyPresenter implements UpdateListener {
         super.onCreate(view);
         mStartView = (StartView) view;
         EventBus.getDefault().register(this);
+        mUpdateMgr.registerUpdateListener(this);
         StatService.onEvent(mApp, mApp.getString(R.string.event_enter_start_acti), mApp.getString(R.string.event_enter_start_acti));
         mIsForceUpdate = false;
         mApp.runOnMainThread(new Runnable() {
@@ -57,6 +58,7 @@ public class StartPresenter extends EmptyPresenter implements UpdateListener {
     public void onDestroy(BaseView view) {
         super.onDestroy(view);
         EventBus.getDefault().unregister(this);
+        mUpdateMgr.unregisterUpdateReceiver(this);
         mStartView = null;
     }
 
@@ -100,7 +102,7 @@ public class StartPresenter extends EmptyPresenter implements UpdateListener {
             public void onPositive(MaterialDialog dialog) {
                 Log.d(LOG_TAG, "start upgrade");
                 dialog.dismiss();
-                mUpdateMgr.startUpdate(StartPresenter.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
+                mUpdateMgr.startUpdate(mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
             }
 
             @Override
@@ -117,7 +119,7 @@ public class StartPresenter extends EmptyPresenter implements UpdateListener {
             public void onPositive(MaterialDialog dialog) {
                 Log.d(LOG_TAG, "start upgrade");
                 dialog.dismiss();
-                mUpdateMgr.startUpdate(StartPresenter.this, mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
+                mUpdateMgr.startUpdate(mConst.getFullDownloadUrl(updateCheckResult.getApkUrl()));
             }
 
             @Override
