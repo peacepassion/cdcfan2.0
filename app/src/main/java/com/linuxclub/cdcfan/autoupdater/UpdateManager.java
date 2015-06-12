@@ -28,6 +28,12 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import rx.Observer;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 @Singleton
 public class UpdateManager {
@@ -54,19 +60,25 @@ public class UpdateManager {
 
     public void startCheckUpdate() {
         CheckUpdateTask task = mRestAdapter.create(CheckUpdateTask.class);
-        task.check(new Callback<UpdateCheckResult>() {
+        task.check().observeOn(Schedulers.newThread()).subscribeOn(Schedulers.immediate()).subscribe(new Subscriber<UpdateCheckResult>() {
             @Override
-            public void success(UpdateCheckResult result, Response response) {
-                Log.d(LOG_TAG, "check update task succ");
-                result.setCheckSucc(true);
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOG_TAG, "check update task error");
+                UpdateCheckResult result = new UpdateCheckResult();
+                result.setCheckSucc(false);
                 EventBus.getDefault().post(result);
             }
 
             @Override
-            public void failure(RetrofitError retrofitError) {
-                UpdateCheckResult result = new UpdateCheckResult();
-                result.setCheckSucc(false);
-                EventBus.getDefault().post(result);
+            public void onNext(UpdateCheckResult updateCheckResult) {
+                Log.d(LOG_TAG, "check update task onNext");
+                Log.d(LOG_TAG, "check update task succ");
+                updateCheckResult.setCheckSucc(true);
+                EventBus.getDefault().post(updateCheckResult);
             }
         });
     }
