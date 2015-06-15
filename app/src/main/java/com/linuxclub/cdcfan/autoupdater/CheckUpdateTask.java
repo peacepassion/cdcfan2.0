@@ -2,6 +2,7 @@ package com.linuxclub.cdcfan.autoupdater;
 
 import retrofit.Callback;
 import retrofit.http.GET;
+import rx.Observable;
 
 /**
  * Created by peace_da on 2015/6/8.
@@ -9,6 +10,6 @@ import retrofit.http.GET;
 public interface CheckUpdateTask {
 
     @GET("/media/android/version.json")
-    void check(Callback<UpdateCheckResult> callback);
+    Observable<UpdateCheckResult> check();
 
 }

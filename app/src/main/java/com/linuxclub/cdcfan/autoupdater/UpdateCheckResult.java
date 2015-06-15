@@ -51,10 +51,14 @@ public class UpdateCheckResult {
 
     @Override
     public String toString() {
-        return "version code: " + mUpdateInfo.mVersionCode
-                + ", force update: " + mUpdateInfo.mForceUpdate
-                + ", apk url: " + mUpdateInfo.mApkUrl
-                + ", update tips: " + mUpdateInfo.mUpdateTips.mZhCN;
+        if (mUpdateInfo != null) {
+            return "version code: " + mUpdateInfo.mVersionCode
+                    + ", force update: " + mUpdateInfo.mForceUpdate
+                    + ", apk url: " + mUpdateInfo.mApkUrl
+                    + ", update tips: " + mUpdateInfo.mUpdateTips.mZhCN;
+        } else {
+            return null;
+        }
     }
 
     private static class UpdateInfo {
