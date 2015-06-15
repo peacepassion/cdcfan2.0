@@ -1,46 +1,49 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     style="@style/MM.CommonScrollView">
 
     <FrameLayout style="@style/MM">
 
         <LinearLayout style="@style/MM.CommonVerticalLL">
 
-            <include layout="@layout/header"/>
+            <include layout="@layout/header" />
 
-            <LinearLayout style="@style/MW"
-                android:layout_marginTop="100dp"
+            <LinearLayout
+                style="@style/MW"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="100dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/username"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
                 <EditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/gray2"
-                    android:hint="@string/username_hint"/>
+                    android:hint="@string/username_hint"
+                    android:textColorHint="@color/gray2" />
 
             </LinearLayout>
 
-            <com.gc.materialdesign.views.ButtonRectangle
-                android:id="@+id/login"
-                materialdesign:rippleSpeed="100"
-                style="@style/MW.CommonBtn"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/login"/>
+            <com.andexert.library.RippleView
+                style="@style/WW.CommonRV"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:id="@+id/login"
+                    style="@style/MW.CommonBtn.MarginLR"
+                    android:text="@string/login" />
+
+            </com.andexert.library.RippleView>
 
         </LinearLayout>
 
-        <include android:id="@+id/loading"
-            layout="@layout/loading"/>
+        <include
+            android:id="@+id/loading"
+            layout="@layout/loading" />
 
     </FrameLayout>
 

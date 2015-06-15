@@ -3,9 +3,9 @@ package com.linuxclub.cdcfan.ui.view;
 import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.model.User;
 import com.linuxclub.cdcfan.ui.presenter.BasePresenter;

@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.gc.materialdesign.views.Button;
 import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.model.User;
 import com.linuxclub.cdcfan.ui.presenter.BasePresenter;
