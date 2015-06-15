@@ -9,7 +9,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"/>
 
-    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+    <ProgressBar
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_width="32dp"
