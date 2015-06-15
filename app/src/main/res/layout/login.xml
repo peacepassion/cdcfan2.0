@@ -34,9 +34,7 @@
 
                 <Button
                     android:id="@+id/login"
-                    style="@style/MW.CommonBtn"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    style="@style/MW.CommonBtn.MarginLR"
                     android:text="@string/login" />
 
             </com.andexert.library.RippleView>

@@ -19,7 +19,7 @@
 
                 <Button
                     android:id="@+id/order"
-                    style="@style/MW.CommonBtn"
+                    style="@style/MW.CommonBtn.MarginLR"
                     android:text="@string/xiadan"/>
 
             </com.andexert.library.RippleView>
@@ -29,7 +29,7 @@
 
                 <Button
                     android:id="@+id/check_order"
-                    style="@style/MW.CommonBtn"
+                    style="@style/MW.CommonBtn.MarginLR"
                     android:text="@string/check_order"/>
 
             </com.andexert.library.RippleView>
@@ -39,7 +39,7 @@
 
                 <Button
                     android:id="@+id/log_out"
-                    style="@style/MW.CommonBtn"
+                    style="@style/MW.CommonBtn.MarginLR"
                     android:text="@string/log_out"/>
 
             </com.andexert.library.RippleView>

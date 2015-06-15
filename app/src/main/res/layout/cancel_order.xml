@@ -20,9 +20,7 @@
 
             <Button
                 android:id="@+id/cancel"
-                style="@style/MW.CommonBtn"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                style="@style/MW.CommonBtn.MarginLR"
                 android:text="@string/cancel_order" />
 
         </com.andexert.library.RippleView>
