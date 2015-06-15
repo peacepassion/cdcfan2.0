@@ -2,7 +2,6 @@
 
 #### Doing
 * order remind function
-* apply MVP in UI
 
 #### ToDo
 * add a legal declaration page by toolbar menu

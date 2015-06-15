@@ -10,7 +10,6 @@ import android.content.res.Resources;
 
 import com.linuxclub.cdcfan.R;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 

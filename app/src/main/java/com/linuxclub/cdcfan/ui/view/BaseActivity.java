@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
-import com.gc.materialdesign.widgets.SnackBar;
 import com.linuxclub.cdcfan.MyApplication;
 import com.linuxclub.cdcfan.ui.presenter.BasePresenter;
 import com.linuxclub.cdcfan.utils.LogHelper;
@@ -70,7 +69,7 @@ public abstract class BaseActivity extends FragmentActivity implements BaseView 
 
     @Override
     public void showFixToast(String content) {
-        new SnackBar(this, content).show();
+        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
     }
 
     @Override
