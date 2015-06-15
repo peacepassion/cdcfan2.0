@@ -2,7 +2,6 @@
 
 #### Doing
 * order remind function
-* apply MVP in UI
 
 #### ToDo
 * add a legal declaration page by toolbar menu
@@ -14,3 +13,4 @@
 * introduce [BaiDuAnalytics](http://mtj.baidu.com/web/dashboard) tracking users;
 * introduce [Dagger](https://github.com/square/dagger) as DI;
 * replace origin Auto Updater by self made one;
+* apply MVP in UI
