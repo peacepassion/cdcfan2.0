@@ -4,14 +4,17 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
 import com.linuxclub.cdcfan.MyApplication;
+import com.linuxclub.cdcfan.R;
 import com.linuxclub.cdcfan.ui.presenter.BasePresenter;
 import com.linuxclub.cdcfan.utils.LogHelper;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * Created by peace_da on 2015/4/15.
@@ -19,6 +22,8 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity implements BaseView {
 
     protected final String LOG_TAG = LogHelper.getNativeSimpleLogTag(this.getClass(), LogHelper.DEFAULT_LOG_TAG);
+
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +59,13 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         StatService.setDebugOn(true);
     }
 
-    protected void initView() {}
+    protected void initView() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            mToolbar.setTitle("");
+            setSupportActionBar(mToolbar);
+        }
+    }
 
     @Override
     protected void onResume() {
