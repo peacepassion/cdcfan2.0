@@ -68,13 +68,9 @@ public class LoginActivity extends LoadingBaseActivity implements OnClickListene
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.login) {
+            mLoginPresenter.setUserName(mUserNameET.getText().toString());
             mLoginPresenter.startLogin();
         }
-    }
-
-    @Override
-    public String getUserInputUsername() {
-        return mUserNameET.getText().toString();
     }
 
     @Override
