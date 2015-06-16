@@ -7,8 +7,6 @@ import com.linuxclub.cdcfan.model.User;
  */
 public interface LoginView extends LoadingBaseView {
 
-    String getUserInputUsername();
-
     void startOrderPage(User user);
 
 }

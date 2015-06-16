@@ -55,8 +55,11 @@ public class LoginPresenter extends EmptyPresenter {
         }
     }
 
+    public void setUserName(String userName) {
+        mUserName = userName;
+    }
+
     public void startLogin() {
-        mUserName = mLoginView.getUserInputUsername();
         if (TextUtils.isEmpty(mUserName)) {
             mLoginView.showFixToast(mApp.getString(R.string.fail_empty));
         } else {
