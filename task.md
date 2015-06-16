@@ -2,6 +2,7 @@
 
 #### Doing
 * order remind function
+* introduce latest Android Support library
 
 #### ToDo
 * add a legal declaration page by toolbar menu
