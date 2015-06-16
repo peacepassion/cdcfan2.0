@@ -2,7 +2,8 @@ package com.linuxclub.cdcfan.ui.view;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.baidu.mobstat.StatService;
@@ -15,7 +16,7 @@ import butterknife.ButterKnife;
 /**
  * Created by peace_da on 2015/4/15.
  */
-public abstract class BaseActivity extends FragmentActivity implements BaseView {
+public abstract class BaseActivity extends AppCompatActivity implements BaseView {
 
     protected final String LOG_TAG = LogHelper.getNativeSimpleLogTag(this.getClass(), LogHelper.DEFAULT_LOG_TAG);
 
@@ -69,7 +70,7 @@ public abstract class BaseActivity extends FragmentActivity implements BaseView 
 
     @Override
     public void showFixToast(String content) {
-        Toast.makeText(this, content, Toast.LENGTH_LONG).show();
+        Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content), content, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
